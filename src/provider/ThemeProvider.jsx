@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext } from 'react'
+import { useLocalStorage } from '../hooks/useLocalStorage' // <-- importa il tuo hook personalizzato
 
 const ThemeContext = createContext()
 
@@ -11,19 +12,15 @@ export const useTheme = () => {
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme] = useLocalStorage('theme', 'light') // <-- usa il tuo hook
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light'
-    setTheme(savedTheme)
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-  }, [])
+  // Aggiorna il DOM quando cambia il tema
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'))
   }
 
   return (
