@@ -1,15 +1,16 @@
 
 import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody } from "@heroui/react";
 
-import useDocumentTitle from '../Hooks/UseDocumentTitle'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EyeFilledIcon from '../assets/EyeFilledIcon'
 import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
 import Logo from '../assets/AppControl2.png';
+import { s } from "framer-motion/client";
 //FIXME -  il controllo della password dev'èssere fatto solo quando l'utente clicca aiuto con la password
 
 function App() {
-  const [title, setTitle] = useDocumentTitle("Login")
+
+
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(null);
   const [errors, setErrors] = useState({});

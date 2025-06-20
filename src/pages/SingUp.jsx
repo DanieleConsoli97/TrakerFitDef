@@ -6,12 +6,15 @@ import { useState } from "react";
 import EyeFilledIcon from '../assets/EyeFilledIcon'
 import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
 import Logo from '../assets/AppControl2.png';
+import { useAuth } from "../contexts/AuthProvider";
 const SingUp = () => {
+
   const [title, setTitle] = useDocumentTitle("Login")
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(null);
   const [errors, setErrors] = useState({});
   const [isVisible, setIsVisible] = useState(false);
+  const { registerAction } = useAuth();
   const toggleVisibility = () => setIsVisible(!isVisible);
   // Real-time password validation
   const getPasswordError = (value) => {
@@ -53,15 +56,14 @@ const SingUp = () => {
       return;
     }
 
-    if (data.terms !== "true") {
-      setErrors({ terms: "Please accept the terms" });
-
-      return;
-    }
+   
 
     // Clear errors and submit
     setErrors({});
+    
     setSubmitted(data);
+    registerAction(data)
+    
   };
 
   return (
@@ -85,14 +87,27 @@ const SingUp = () => {
                   isRequired
                   errorMessage={({ validationDetails }) => {
                     if (validationDetails.valueMissing) {
-                      return "Please enter your name";
+                      return "Per favore inserisci il tuo nome";
                     }
                     return errors.name;
                   }}
-                  label="Name"
+                  label="nome"
                   labelPlacement="outside"
-                  name="name"
-                  placeholder="Enter your name"
+                  name="nome"
+                  placeholder="Inserisci il tuo nome"
+                />
+                <Input
+                  isRequired
+                  errorMessage={({ validationDetails }) => {
+                    if (validationDetails.valueMissing) {
+                      return "Per favore inserisci il tuo cognome";
+                    }
+                    return errors.name;
+                  }}
+                  label="cognome"
+                  labelPlacement="outside"
+                  name="cognome"
+                  placeholder="Inserisci il tuo cognome"
                 />
                 <Input
                   isRequired
@@ -137,33 +152,8 @@ const SingUp = () => {
                   placeholder="Enter your password"
                   type={isVisible ? "text" : "password"}
                 />
-                <Checkbox
-                  isRequired
-                  classNames={{
-                    label: "text-small",
-                  }}
-                  isInvalid={!!errors.terms}
-                  name="terms"
-                  validationBehavior="aria"
-                  value="true"
-                  onValueChange={() => setErrors((prev) => ({ ...prev, terms: undefined }))}
-                >
-                  Aiuto con la password
-                </Checkbox>
-                <Checkbox
-                  isRequired
-                  classNames={{
-                    label: "text-small",
-                  }}
-                  isInvalid={!!errors.terms}
-                  name="terms"
-                  validationBehavior="aria"
-                  value="true"
-                  onValueChange={() => setErrors((prev) => ({ ...prev, terms: undefined }))}
-                >
-                  Accetta i termini e condizioni
-                </Checkbox>
-                {errors.terms && <span className="text-danger text-small">{errors.terms}</span>}
+                
+                
                 <div className="flex gap-4">
                   <Button className="w-full" color="primary" type="submit">
                     Submit
