@@ -5,13 +5,16 @@ import App from './App.jsx'
 import { HeroUIProvider } from '@heroui/react'
 import { ThemeProvider } from './provider/ThemeProvider.jsx'
 import { BrowserRouter } from 'react-router-dom'
+import { GlobalContextProvider } from './contexts/GlobalContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HeroUIProvider>
       <ThemeProvider>
         <BrowserRouter>
-          <App />
+          <GlobalContextProvider>
+            <App />
+          </GlobalContextProvider>
         </BrowserRouter>
       </ThemeProvider>
     </HeroUIProvider>

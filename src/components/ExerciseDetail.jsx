@@ -32,7 +32,7 @@ const ExerciseDetail = () => {
             <div>
                 {exercise === null && <p>nessun </p>}
                 {exercise === undefined && <p>nessun </p>}
-                {exercise.map((e, index) => (
+                {exercise.map((e) => (
                     <div key={e.exercise_id} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc', borderRadius: '8px' }}>
                     <h3>{e.exercise_name}</h3>
                     <p><strong>Gruppo muscolare:</strong> {e.muscle_group}</p>
