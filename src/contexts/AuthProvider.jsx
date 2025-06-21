@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { i } from 'framer-motion/client';
 
 const AuthContext = createContext(null);
 
@@ -17,6 +18,7 @@ const AuthProvider = ({ children }) => {
     // Si preoccupa solo di impostare lo stato, non di come viene salvato.
     const loginAction = async (credentials) => {
         try {
+           
             const response = await fetch('http://localhost:3000/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -24,7 +26,7 @@ const AuthProvider = ({ children }) => {
                 },
                 body: JSON.stringify(credentials),
             });
-
+            
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Errore durante il login');
@@ -102,9 +104,11 @@ const AuthProvider = ({ children }) => {
         refreshToken, // Il refreshToken se ci servirà in futuro
         loginAction,
         logOutAction,
-        registerAction
+        registerAction,
+        isAuthenticated: !!token, // Booleano che indica se l'utente è autenticato
+      
     };
-
+    console.log(contextValue)
     return (
         <AuthContext.Provider value={contextValue}>
             {children}

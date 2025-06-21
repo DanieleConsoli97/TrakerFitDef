@@ -19,7 +19,6 @@ export function useLocalStorage(key, initialValue) {
             // e restituiamo comunque il valore iniziale come fallback sicuro.
             console.error(`Errore nel parsing del localStorage per la chiave "${key}"`, error);
             return initialValue instanceof Function ? initialValue() : initialValue;
-
         }
     });
 

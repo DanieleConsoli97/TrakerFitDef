@@ -8,6 +8,7 @@ import ExerciseDetail from "./components/ExerciseDetail"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
+import SessionsComponets from "./components/SessionsComponets"
 const App = () => {
 
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 <Route path={"/signup"} element={<SingUp />} />
                 <Route path={"/contatti"} element={<Contatti />} />
                 <Route path={"/esercizi"} element={<ExerciseDetail />} />
+                <Route path={"/session"} element={<SessionsComponets />} />
                 {/* rotte protette */}
                 <Route path="/dashboard"element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>
                 

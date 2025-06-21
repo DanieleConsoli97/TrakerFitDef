@@ -3,15 +3,16 @@ import { useState } from "react";
 import EyeFilledIcon from '../assets/EyeFilledIcon'
 import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
 import Logo from '../assets/AppControl2.png';
-
+import { useAuth } from "../contexts/AuthProvider";
 
 function App() {
+
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(null);
   const [errors, setErrors] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
-  
+  const { loginAction } = useAuth();
   // Real-time password validation
   const getPasswordError = (value) => {
     if (value.length < 4) {
@@ -49,14 +50,11 @@ function App() {
       return;
     }
 
-    if (data.terms !== "true") {
-      setErrors({ terms: "Please accept the terms" });
-      return;
-    }
-
     // Clear errors and submit
     setErrors({});
     setSubmitted(data);
+    loginAction(data)
+
   };
 
   return (
@@ -64,10 +62,10 @@ function App() {
       <Card className="w-full max-w-md py-10 mx-auto">
         <CardHeader className="flex flex-col items-center gap-3">
           <picture className="text-center mb-2">
-            <img 
-              src={Logo} 
-              alt="Fitness App Control Logo" 
-              className="mx-auto w-48 h-48 sm:w-60 sm:h-60 object-contain" 
+            <img
+              src={Logo}
+              alt="Fitness App Control Logo"
+              className="mx-auto w-48 h-48 sm:w-60 sm:h-60 object-contain"
             />
           </picture>
         </CardHeader>
@@ -136,19 +134,7 @@ function App() {
               >
                 Aiuto con la password
               </Checkbox>
-              <Checkbox
-                isRequired
-                classNames={{
-                  label: "text-small",
-                }}
-                isInvalid={!!errors.terms}
-                name="terms"
-                validationBehavior="aria"
-                value="true"
-                onValueChange={() => setErrors((prev) => ({ ...prev, terms: undefined }))}
-              >
-                I agree to the terms and conditions
-              </Checkbox>
+
               {errors.terms && <span className="text-danger text-small">{errors.terms}</span>}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="w-full" color="primary" type="submit">

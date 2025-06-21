@@ -55,33 +55,35 @@ const SingUp = () => {
       return;
     }
 
-   
-
     // Clear errors and submit
     setErrors({});
-    
+    console.log(data)
     setSubmitted(data);
     registerAction(data)
-    
+
   };
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-lvh bg-background">
-        <Card className="w-full max-w-md py-10">
+      <div className="flex items-center justify-center min-h-screen bg-background px-4 ">
+        <Card className="w-full max-w-md py-10 mx-auto">
           <CardHeader className="flex flex-col items-center gap-3">
             <picture className="text-center mb-2">
-              <img src={Logo} alt="Fitness App Control Logo" className="mx-auto w-60 h-60" />
+              <img
+                src={Logo}
+                alt="Fitness App Control Logo"
+                className="mx-auto w-48 h-48 sm:w-60 sm:h-60 object-contain"
+              />
             </picture>
           </CardHeader>
-          <CardBody>
+          <CardBody className="px-6">
             <Form
               className="w-full justify-center items-center space-y-4"
               validationErrors={errors}
               onReset={() => setSubmitted(null)}
               onSubmit={onSubmit}
             >
-              <div className="flex flex-col gap-4 max-w-md">
+              <div className="flex flex-col gap-4 w-full">
                 <Input
                   isRequired
                   errorMessage={({ validationDetails }) => {
@@ -94,6 +96,7 @@ const SingUp = () => {
                   labelPlacement="outside"
                   name="nome"
                   placeholder="Inserisci il tuo nome"
+                  className="w-full"
                 />
                 <Input
                   isRequired
@@ -107,6 +110,7 @@ const SingUp = () => {
                   labelPlacement="outside"
                   name="cognome"
                   placeholder="Inserisci il tuo cognome"
+                  className="w-full"
                 />
                 <Input
                   isRequired
@@ -123,9 +127,10 @@ const SingUp = () => {
                   name="email"
                   placeholder="Enter your email"
                   type="email"
+                  className="w-full"
                 />
                 <Input
-                  className="max-w-xs"
+                  className="w-full"
                   isRequired
                   errorMessage={getPasswordError(password)}
                   isInvalid={getPasswordError(password) !== null}
@@ -133,6 +138,7 @@ const SingUp = () => {
                   name="password"
                   value={password}
                   onChange={(e) => setPassword(() => e.target.value)}
+
                   endContent={
                     <button
                       aria-label="toggle password visibility"
@@ -151,13 +157,25 @@ const SingUp = () => {
                   placeholder="Enter your password"
                   type={isVisible ? "text" : "password"}
                 />
-                
-                
-                <div className="flex gap-4">
+                <Checkbox
+                  isRequired
+                  classNames={{
+                    label: "text-small",
+                  }}
+                  isInvalid={!!errors.terms}
+                  name="terms"
+                  validationBehavior="aria"
+                  value="true"
+                  onValueChange={() => setErrors((prev) => ({ ...prev, terms: undefined }))}
+                >
+                  I agree to the terms and conditions
+                </Checkbox>
+
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button className="w-full" color="primary" type="submit">
                     Submit
                   </Button>
-                  <Button type="reset" variant="bordered">
+                  <Button className="w-full" type="reset" variant="bordered">
                     Reset
                   </Button>
                 </div>

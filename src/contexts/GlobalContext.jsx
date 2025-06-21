@@ -3,7 +3,10 @@ import { AuthProvider } from '../contexts/AuthProvider.jsx';
 const GlobalContext = createContext()
 
 const GlobalContextProvider = ({ children }) => {
- const value={}
+   
+
+    const value={}
+    
     return (
         
          <GlobalContext.Provider value={value}>
