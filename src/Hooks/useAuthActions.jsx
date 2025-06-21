@@ -1,6 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+const SERVER_URL_DEV= import.meta.env.VITE_SERVER_URL_DEV
 
 const useAuthActions = () => {
      const navigate = useNavigate();
@@ -13,7 +14,7 @@ const useAuthActions = () => {
     const loginAction = async (credentials) => {
         try {
 
-            const response = await fetch('http://localhost:3000/api/auth/login', {
+            const response = await fetch(`${SERVER_URL_DEV}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ const useAuthActions = () => {
 
     const registerAction = async (formData) => {
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
+            const response = await fetch(`${SERVER_URL_DEV}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ const useAuthActions = () => {
     const logOutAction = async () => {
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/logout', {
+            const response = await fetch(`${SERVER_URL_DEV}/api/auth/logout`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
