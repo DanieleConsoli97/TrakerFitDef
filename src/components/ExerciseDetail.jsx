@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 
+
 const ExerciseDetail = () => {
     const [exercise, setExercise] = useState(null)
-
     const fetchExercise = async () => {
         try {
 

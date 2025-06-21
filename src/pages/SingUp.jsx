@@ -1,7 +1,7 @@
 
 import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody } from "@heroui/react";
 
-import useDocumentTitle from '../Hooks/UseDocumentTitle'
+
 import { useState } from "react";
 import EyeFilledIcon from '../assets/EyeFilledIcon'
 import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
@@ -9,7 +9,6 @@ import Logo from '../assets/AppControl2.png';
 import { useAuth } from "../contexts/AuthProvider";
 const SingUp = () => {
 
-  const [title, setTitle] = useDocumentTitle("Login")
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(null);
   const [errors, setErrors] = useState({});

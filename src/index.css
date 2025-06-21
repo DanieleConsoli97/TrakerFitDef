@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.min-h-screen-mobile {
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height - supporto moderno */
+}
+
+.h-screen-mobile {
+  height: 100vh;
+  height: 100dvh;
+}

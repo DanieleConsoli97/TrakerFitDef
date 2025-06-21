@@ -19,7 +19,6 @@ const App = () => {
                 <Route path={"/singup"} element={<SingUp />} />
                 <Route path={"/contatti"} element={<Contatti />} />
                 <Route path={"/esercizi"} element={<ExerciseDetail />} />
-                
                 {/* rotte protette */}
                 <Route path="/dashboard"element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>
                 

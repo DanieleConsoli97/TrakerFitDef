@@ -6,6 +6,7 @@ import { HeroUIProvider } from '@heroui/react'
 import { ThemeProvider } from './provider/ThemeProvider.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { GlobalContextProvider } from './contexts/GlobalContext.jsx'
+import DocumentTitleUpdater from './provider/DocumentTitleUpdate.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
       <ThemeProvider>
         <BrowserRouter>
           <GlobalContextProvider>
+            <DocumentTitleUpdater />
             <App />
           </GlobalContextProvider>
         </BrowserRouter>

@@ -4,8 +4,8 @@ const GlobalContext = createContext()
 
 const GlobalContextProvider = ({ children }) => {
  const value={}
-
     return (
+        
          <GlobalContext.Provider value={value}>
             {/* Avvolgi tutto con AuthProvider */}
             <AuthProvider>
