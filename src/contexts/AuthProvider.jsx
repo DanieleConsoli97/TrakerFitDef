@@ -1,13 +1,13 @@
 import React, { createContext, useContext } from 'react';
 import useAuthActions from '../Hooks/useAuthActions';
-import useSessions from '../Hooks/useSessions';
+import useSessionData from '../Hooks/useSessionData';
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
 
 
     const { loginAction, registerAction, logOutAction, token, refreshToken } = useAuthActions();
-    const { indexSessions } = useSessions();
+    const { sessionsIndex } = useSessionData(token);
 
     const contextValue = {
         token, // L'accessToken per le chiamate API
@@ -16,7 +16,7 @@ const AuthProvider = ({ children }) => {
         logOutAction,
         registerAction,
         isAuthenticated: !!token,// Booleano che indica se l'utente è autenticato
-        indexSessions
+        sessionsIndex, // Dati delle sessioni recuperati
     };
     console.log(contextValue)
     return (

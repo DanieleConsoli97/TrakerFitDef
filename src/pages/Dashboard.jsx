@@ -1,36 +1,19 @@
 
 import { useEffect } from "react";
-import { useAuth } from "../contexts/AuthProvider";
 import { useState } from "react";
 import SessionsComponets from "../components/SessionsComponets";
+import { useAuth } from "../contexts/AuthProvider";
 const Dashboard = () => {
-  const [sessionsIndex, setSessions] = useState();
-  const { indexSessions,token } = useAuth();
-  
-useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-       
-        const sessions = await indexSessions(token);
-        setSessions(sessions);
-      } catch (err) {
-        console.error(err);
-      } 
-    };
-
-    if (token) {
-      fetchSessions();
-    }
-  }, [token, indexSessions]);
+  const { sessionIndex } = useAuth();
+  console.log(sessionIndex)
 
   return (
     <>
     
-   
-    {sessionsIndex === undefined && <p>Caricamento...</p>}
-    {sessionsIndex === null && <p>Errore nel caricamento delle sessioni</p>}
-    {sessionsIndex &&  
-      <SessionsComponets sessions={sessionsIndex.sessions} />
+    {sessionIndex === undefined && <p>Caricamento...</p>}
+    {sessionIndex === null && <p>Errore nel caricamento delle sessioni</p>}
+    {sessionIndex &&  
+      <SessionsComponets sessions={sessionIndex?.sessions} />
     }
     
     </>

@@ -12,6 +12,7 @@
   "dependencies": {
     "@heroui/react": "^2.7.10",
     "@heroui/theme": "^2.4.17",
+    "dayjs": "^1.11.13",
     "framer-motion": "^12.18.0",
     "motion": "^12.18.0",
     "react-dom": "^19.1.0",
