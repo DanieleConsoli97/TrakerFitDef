@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
 import SessionsComponets from "./components/SessionsComponets"
-import Session from "./components/Session"
+import SessionDetails from "./components/SessionDetails"
 const App = () => {
 
     return (
@@ -24,7 +24,7 @@ const App = () => {
                 <Route path={"/session"} element={<SessionsComponets />} />
                 {/* rotte protette */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/session/:id" element={<ProtectedRoute><Session /></ProtectedRoute>} />
+                <Route path="/session/:id" element={<ProtectedRoute><SessionDetails /></ProtectedRoute>} />
                 <Route path="/NotFound" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/NotFound" replace />} />
             </Route>

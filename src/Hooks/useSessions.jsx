@@ -1,7 +1,9 @@
 // Il tuo hook, ma corretto e funzionante
 const SERVER_URL_DEV = import.meta.env.VITE_SERVER_URL_DEV;
 
-const useSessions = () => {
+const useSessions = (token) => {
+    
+    const userToken= token || localStorage.getItem('token'); // Prendi il token dall'argomento o da localStorage
     const indexSessions = async (token, page = 1) => {
         try {
             // Ho aggiunto il parametro 'page' per la paginazione
@@ -9,7 +11,7 @@ const useSessions = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${userToken}`
                 }
             });
 
@@ -20,12 +22,12 @@ const useSessions = () => {
             if (!response.ok) {
                 throw new Error(data.message || 'Errore durante il recupero delle sessioni');
             }
-            
+
             // Il controllo sulla lunghezza ora viene fatto sull'array di dati effettivo
             if (data.sessions.length === 0) {
                 // Non lanciamo un errore, ma restituiamo i dati vuoti,
                 // così il componente può mostrare "Nessuna sessione trovata".
-                return data; 
+                return data;
             }
             console.log(data)
             return data;

@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
 import {
@@ -127,6 +127,19 @@ export default function App() {
             </Link>
           </NavbarItem>
         ))}
+
+        {isAuthenticated && (
+          <NavbarItem isActive={isActivePath("/dashboard")}>
+            <Link
+              to="/dashboard"
+              color={isActivePath("/dashboard") ? "primary" : "foreground"}
+              className="flex items-center gap-2"
+            >
+              <span>📊</span>
+              Dashboard
+            </Link>
+          </NavbarItem>
+        )}
       </NavbarContent>
 
       {/* Azioni a Destra */}

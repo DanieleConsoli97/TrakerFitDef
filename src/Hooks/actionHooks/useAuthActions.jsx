@@ -1,6 +1,6 @@
 
 import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useLocalStorage } from '../useLocalStorage';
 const SERVER_URL_DEV= import.meta.env.VITE_SERVER_URL_DEV
 
 const useAuthActions = () => {
