@@ -1,4 +1,4 @@
-import { Card, ScrollShadow } from "@heroui/react";
+import { ScrollShadow } from "@heroui/react";
 import CardSessions from './CardSessions.jsx';
 
 const SessionsComponets = ({ sessions }) => {

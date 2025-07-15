@@ -1,6 +1,7 @@
 import { createContext, useContext, } from 'react';
 import useAuthActions from '../Hooks/actionHooks/useAuthActions';
 import useSessionsAction from '../Hooks/actionHooks/useSessionsAction';
+import useExercisesAction from '../Hooks/actionHooks/useExerciseAction';
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
@@ -8,8 +9,7 @@ const AuthProvider = ({ children }) => {
     
     const { loginAction, registerAction, logOutAction, token, refreshToken } = useAuthActions();
     const {sessionsIndex} = useSessionsAction(token);
-
-  
+    const {exercisesIndex,addExerciseToSession,addSetToWorkoutExercise} = useExercisesAction(token);
 
     const contextValue = {
         token, // L'accessToken per le chiamate API
@@ -18,7 +18,10 @@ const AuthProvider = ({ children }) => {
         logOutAction,
         registerAction,
         isAuthenticated: !!token,// Booleano che indica se l'utente è autenticato
-        sessionsIndex
+        sessionsIndex,
+        exercisesIndex,
+        addExerciseToSession,
+        addSetToWorkoutExercise
     };
     console.log(contextValue)
     return (

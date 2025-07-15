@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
 
 const SessionDetails = () => {
+  
   const { id } = useParams();
   const { sessionsIndex } = useAuth();
 
@@ -21,6 +22,7 @@ const SessionDetails = () => {
 
   // Se trovata, mostra i dettagli
   return (
+    <>
     <div className="p-4">
       <h1 className="text-2xl font-bold">Dettaglio Sessione</h1>
       <div className="mt-4 space-y-2">
@@ -29,7 +31,9 @@ const SessionDetails = () => {
         {/* Aggiungi altri campi della sessione qui */}
       </div>
     </div>
-  );
+    {/* aggiunta esercizio alla sessione */}
+  </>
+);
 };
 
 export default SessionDetails;
