@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import  useDocumentTitle  from '../Hooks/UseDocumentTitle';
+import  useDocumentTitle  from '../Hooks/useDocumentTitle';
 
 
 export default function DocumentTitleUpdater() {
