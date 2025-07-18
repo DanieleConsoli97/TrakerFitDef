@@ -1,5 +1,5 @@
 import  { createContext, useContext } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage' // <-- importa il tuo hook personalizzato
+import { useLocalStorage } from '../Hooks/useLocalStorage'
 import { useEffect } from 'react'
 const ThemeContext = createContext()
 
