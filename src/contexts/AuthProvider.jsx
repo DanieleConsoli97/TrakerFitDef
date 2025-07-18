@@ -2,14 +2,16 @@ import { createContext, useContext, } from 'react';
 import useAuthActions from '../Hooks/actionHooks/useAuthActions';
 import useSessionsAction from '../Hooks/actionHooks/useSessionsAction';
 import useExercisesAction from '../Hooks/actionHooks/useExerciseAction';
+import useSessions from '../Hooks/useSessions';
 const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
 
-    
+
     const { loginAction, registerAction, logOutAction, token, refreshToken } = useAuthActions();
-    const {sessionsIndex} = useSessionsAction(token);
-    const {exercisesIndex,addExerciseToSession,addSetToWorkoutExercise} = useExercisesAction(token);
+    const { sessionsIndex } = useSessionsAction(token);
+    const { exercisesIndex, addExerciseToSession, addSetToWorkoutExercise } = useExercisesAction(token);
+    const { detailsSessions,addNewSession } = useSessions(token)
 
     const contextValue = {
         token, // L'accessToken per le chiamate API
@@ -21,7 +23,9 @@ const AuthProvider = ({ children }) => {
         sessionsIndex,
         exercisesIndex,
         addExerciseToSession,
-        addSetToWorkoutExercise
+        addSetToWorkoutExercise,
+        detailsSessions,
+        addNewSession
     };
     console.log(contextValue)
     return (

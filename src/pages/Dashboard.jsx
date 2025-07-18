@@ -3,35 +3,24 @@ import SessionsComponets from "../components/SessionsComponets";
 import ExerciseList from "../components/ExerciseList";
 import { useRef } from "react";
 import { Button } from "@heroui/react";
-
+import dayjs from 'dayjs';
+import { useGlobalContext } from "../contexts/GlobalContext";
 const Dashboard = () => {
 
-  const { sessionsIndex, exercisesIndex, addSetToWorkoutExercise, addExerciseToSession } = useAuth();
+  const { sessionsIndex, exercisesIndex, addSetToWorkoutExercise, addExerciseToSession, addNewSession } = useAuth();
+  const { pageSession, setPageSession } = useGlobalContext()
 
   const sessionValue = useRef()
   const exercisesValue = useRef()
   const serieValue = useRef()
   const ripetizioniValue = useRef()
   const pesoValue = useRef()
+  const exercisesValue2 = useRef()
 
-  const checkData = (data) => {
-    if (data === null) {
-      throw new Error(`value non può essere vuoto`)
-    }
-    if (typeof (data) != "number") {
-      console.log(typeof (data) )
-      throw new Error(" value dev'essere un numero")
-    }
-  }
   const handleSend = async () => {
     try {
-     
 
-     
       const sessionId = sessionValue.current.value
-      const exercisesId = 1
-      
-      
       const data = {
         "serie_num": parseInt(serieValue.current.value),
         "ripetizioni": parseInt(ripetizioniValue.current.value),
@@ -40,7 +29,7 @@ const Dashboard = () => {
       addSetToWorkoutExercise(parseInt(sessionId), parseInt(20), data)
       console.log("operazione riuscita")
 
-     
+
     } catch (error) {
       console.log(error)
     }
@@ -49,21 +38,39 @@ const Dashboard = () => {
 
   const handleAddExe = async () => {
     try {
-       const exercisesId = exercisesValue.current.value
+      const exercisesId = exercisesValue.current.value
       const sessionId = sessionValue.current.value
-    console.log(exercisesId)
-    checkData(parseInt(exercisesId))
-    
-    const data = {
-      "esercizio_id": parseInt(exercisesId),
-      "note": "Focus sulla fase negativa, 3 serie x 10 ripetizioni"
-    }
-    addExerciseToSession(sessionId, data)
-    console.log("operazione riuscita")
+      console.log("id esercizio", exercisesId)
+
+      const data = {
+        "esercizio_id": parseInt(exercisesId),
+        "note": "Focus sulla fase negativa, 3 serie x 10 ripetizioni"
+      }
+      addExerciseToSession(sessionId, data)
+      console.log("operazione riuscita")
     } catch (error) {
       console.log(error)
     }
-    
+
+  }
+
+  //NOTE - logica aggiunta sessione
+  const noteSessione = useRef()
+
+  const handleAddSession = async () => {
+    try {
+      const note = noteSessione.current.value
+      const formattedDate = dayjs().format('YYYY-MM-DD');
+      const data = {
+        "data_sessione": formattedDate,
+        "note": note
+      }
+      addNewSession(data)
+      console.log(data)
+      console.log("operazione riuscita")
+    } catch (error) {
+      console.log(error)
+    }
 
   }
   return (
@@ -86,6 +93,7 @@ const Dashboard = () => {
             {sessionsIndex && (
               <SessionsComponets sessions={sessionsIndex.sessions} />
             )}
+
           </div>
         </div>
 
@@ -94,6 +102,14 @@ const Dashboard = () => {
           <h2 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-white">
             ExerciseList
           </h2>
+          {sessionsIndex && (
+            <>
+               <Button disabled={pageSession === 1} onClick={() => setPageSession(c => c - 1)}>+</Button>
+              <Button disabled={pageSession >= sessionsIndex.totalPages} onClick={() => setPageSession(c => c + 1)}>-</Button>
+             
+            </>
+          )}
+
           <div className="flex-1 text-violet-200">
 
             {exercisesIndex === undefined && (
@@ -147,12 +163,22 @@ const Dashboard = () => {
 
             <Button className="max-w-[120px]" onClick={handleAddExe} >aggiungi sessione</Button>
           </div>
+          {sessionsIndex && (
+            <>
+              <h2 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-white">
+                Aggiungi una sessione di allenamento
+              </h2>
+              <label htmlFor="">Note sessione</label>
+              <textarea ref={noteSessione} name="" id=""></textarea>
+              <Button onClick={handleAddSession}>Aggiungi </Button>
+            </>
+          )}
         </div>
 
         {/* Sezione 4 - In basso a destra / ultima su mobile */}
         <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4 min-h-[200px] lg:min-h-0">
           <h2 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-white">
-            Aggiungi un esercizio alla sessione
+            Aggiungi set esercizio
           </h2>
           <div className="flex-1 min-h-0">
             {sessionsIndex === undefined && (
@@ -178,7 +204,7 @@ const Dashboard = () => {
               <p className="text-center text-red-300">Errore nel caricamento degli esericizi</p>
             )}
             {exercisesIndex && (
-              <select className="max-w-xs" ref={exercisesValue} defaultValue={exercisesValue}>
+              <select className="max-w-xs" ref={exercisesValue2} defaultValue={exercisesValue2}>
                 {exercisesIndex?.exercises.map((e) => {
                   return <option key={e.id} value={e.id} >{e.nome}</option>
                 })}
