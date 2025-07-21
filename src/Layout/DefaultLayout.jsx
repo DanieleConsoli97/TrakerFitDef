@@ -4,7 +4,7 @@ import NavBar from '../components/NavBar'
 const DefaultLayout = () => {
  
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen ">
       <NavBar />
       
       {/* Main content area */}

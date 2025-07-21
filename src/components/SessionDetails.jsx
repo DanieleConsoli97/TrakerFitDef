@@ -70,20 +70,48 @@ const SessionDetails = () => {
 
   return (
     <>
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">Dettaglio Sessione</h1>
-        <div className="mt-4 space-y-2">
-          <p>
-            <strong>ID:</strong> {session.id}
-          </p>
-          <p>
-            <strong>Data:</strong>{" "}
-            {new Date(session.data_sessione).toLocaleDateString("it-IT")}
-          </p>
-          <p>
-            <strong>Note:</strong> {session.note}
-          </p>
 
+      <h1 className="text-2xl font-bold">Dettaglio Sessione</h1>
+      <div className="mt-4 space-y-4">
+        <p>
+          <strong>ID:</strong> {session.id}
+        </p>
+        <p>
+          <strong>Data:</strong>{" "}
+          {new Date(session.data_sessione).toLocaleDateString("it-IT")}
+        </p>
+        <p>
+          <strong>Note:</strong> {session.note}
+        </p>
+        <div className="p-4">
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">PROVA</div>
+              <div className="text-sm text-gray-600">Esercizi</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">
+                PROVA
+              </div>
+              <div className="text-sm text-gray-600">Serie Totali</div>
+            </div>
+            <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-600">
+                PROVA
+              </div>
+              <div className="text-sm text-gray-600">Ripetizioni</div>
+            </div>
+
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
+
+              <div className="text-2xl font-bold text-purple-600">
+                PROVA
+              </div>
+
+              <div className="text-sm text-gray-600">RPE Medio</div>
+            </div>
+          </div>
           <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4 min-h-[200px] lg:min-h-0">
             <h2 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-white">
               Aggiungi un esercizio alla sessione
@@ -119,16 +147,18 @@ const SessionDetails = () => {
           {session.esercizi && session.esercizi.length > 0 ? (
             <div className="mt-4">
               <h2 className="text-xl font-semibold mb-2">Esercizi</h2>
-              {session.esercizi.map((esercizio) => (
-                <ExerciseItem 
-                  key={esercizio.workoutExerciseId}
-                  esercizio={esercizio} 
-                  sessionId={id}
-                  fetchSessionDetails={fetchSessionDetails}
-                  addSetToWorkoutExercise={addSetToWorkoutExercise}
-                  setError={setError}
-                />
-              ))}
+              <div className="max-h-[600px] overflow-y-auto">
+                {session.esercizi.map((esercizio) => (
+                  <ExerciseItem
+                    key={esercizio.workoutExerciseId}
+                    esercizio={esercizio}
+                    sessionId={id}
+                    fetchSessionDetails={fetchSessionDetails}
+                    addSetToWorkoutExercise={addSetToWorkoutExercise}
+                    setError={setError}
+                  />
+                ))}
+              </div>
             </div>
           ) : (
             <p className="text-gray-600">Nessun esercizio registrato per questa sessione.</p>
@@ -162,75 +192,77 @@ const ExerciseItem = ({ esercizio, sessionId, fetchSessionDetails, addSetToWorko
   };
 
   return (
-    <div className="border p-4 rounded-lg mb-4 shadow-sm">
-      <p>id: {esercizio.workoutExerciseId}</p>
-      <p className="font-bold text-lg mb-1">
-        Esercizio: {esercizio.nomeEsercizio}
-      </p>
-      <p>
-        <strong>Gruppo muscolare:</strong> {esercizio.gruppo_muscolare}
-      </p>
-      {esercizio.noteEsercizio && (
-        <p>
-          <strong>Note Esercizio:</strong> {esercizio.noteEsercizio}
+    <div className=" flex items-center justify-between p-4 mb-4  rounded-lg border shadow-sm">
+      <div>
+        <p>id: {esercizio.workoutExerciseId}</p>
+        <p className="font-bold text-lg mb-1">
+          Esercizio: {esercizio.nomeEsercizio}
         </p>
-      )}
+        <p>
+          <strong>Gruppo muscolare:</strong> {esercizio.gruppo_muscolare}
+        </p>
+        {esercizio.noteEsercizio && (
+          <p>
+            <strong>Note Esercizio:</strong> {esercizio.noteEsercizio}
+          </p>
+        )}
 
-      {esercizio.sets && esercizio.sets.length > 0 ? (
-        <div className="mt-2 pl-4 border-l-2 border-gray-200">
-          <h3 className="font-semibold mb-1">Serie:</h3>
-          {esercizio.sets.map((set, setIndex) => (
-            <p key={setIndex} className="text-sm">
-              Serie {set.serie_num}: {set.ripetizioni} rip. @ {set.peso} kg
-            </p>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-2 text-sm text-gray-500">Nessuna serie registrata per questo esercizio.</p>
-      )}
+        {esercizio.sets && esercizio.sets.length > 0 ? (
+          <div className="mt-2 pl-4 border-l-2 border-gray-200">
+            <h3 className="font-semibold mb-1">Serie:</h3>
+            {esercizio.sets.map((set, setIndex) => (
+              <p key={setIndex} className="text-sm">
+                Serie {set.serie_num}: {set.ripetizioni} rip. @ {set.peso} kg
+              </p>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-gray-500">Nessuna serie registrata per questo esercizio.</p>
+        )}
 
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Serie</label>
-          <input
-            type="number"
-            value={serie}
-            onChange={(e) => setSerie(parseInt(e.target.value) || 0)}
-            className="w-full p-2 border rounded"
-            min="0"
-          />
-        </div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Serie</label>
+            <input
+              type="number"
+              value={serie}
+              onChange={(e) => setSerie(parseInt(e.target.value) || 0)}
+              className="w-full p-2 border rounded"
+              min="0"
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ripetizioni</label>
-          <input
-            type="number"
-            value={ripetizioni}
-            onChange={(e) => setRipetizioni(parseInt(e.target.value) || 0)}
-            className="w-full p-2 border rounded"
-            min="0"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ripetizioni</label>
+            <input
+              type="number"
+              value={ripetizioni}
+              onChange={(e) => setRipetizioni(parseInt(e.target.value) || 0)}
+              className="w-full p-2 border rounded"
+              min="0"
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
-          <input
-            type="number"
-            value={peso}
-            onChange={(e) => setPeso(parseInt(e.target.value) || 0)}
-            className="w-full p-2 border rounded"
-            min="0"
-            step="0.5"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+            <input
+              type="number"
+              value={peso}
+              onChange={(e) => setPeso(parseInt(e.target.value) || 0)}
+              className="w-full p-2 border rounded"
+              min="0"
+              step="0.5"
+            />
+          </div>
 
-        <div>
-          <Button 
-            onClick={handleAddSet}
-            className="w-full"
-          >
-            Aggiungi serie
-          </Button>
+          <div>
+            <Button
+              onClick={handleAddSet}
+              className="w-full"
+            >
+              Aggiungi serie
+            </Button>
+          </div>
         </div>
       </div>
     </div>
