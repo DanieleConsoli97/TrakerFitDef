@@ -8,28 +8,30 @@ const useSessionData = (token) => {
     const {pageSession}=useGlobalContext()
     const [sessionsIndex, setSessions] = useState();
     
-    useEffect(() => {
-        const fetchSessions = async () => {
+    const fetchSessions = async () => {
             try {
                 if(sessionsIndex){
                   if(pageSession>sessionsIndex.totalPages){
                     return
                 }  
                 }
-                
                 const sessions = await indexSessions(pageSession,10);
                 setSessions(sessions);
             } catch (err) {
                 console.error(err);
             }
         };
+    
+        useEffect(() => {
+        fetchSessions()
 
         if (token) {
             fetchSessions();
         }
+
     }, [token,pageSession]);
 
-    return { sessionsIndex }
+    return { sessionsIndex,fetchSessions }
 };
 
 export default useSessionData;

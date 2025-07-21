@@ -5,9 +5,10 @@ import { useRef } from "react";
 import { Button } from "@heroui/react";
 import dayjs from 'dayjs';
 import { useGlobalContext } from "../contexts/GlobalContext";
+
 const Dashboard = () => {
 
-  const { sessionsIndex, exercisesIndex, addSetToWorkoutExercise, addExerciseToSession, addNewSession } = useAuth();
+  const { sessionsIndex, exercisesIndex, addSetToWorkoutExercise, addExerciseToSession, addNewSession,fetchSessions } = useAuth();
   const { pageSession, setPageSession } = useGlobalContext()
 
   const sessionValue = useRef()
@@ -59,20 +60,22 @@ const Dashboard = () => {
 
   const handleAddSession = async () => {
     try {
-      const note = noteSessione.current.value
-      const formattedDate = dayjs().format('YYYY-MM-DD');
+      const note = noteSessione.current.value;
+      const formattedDate = dayjs().format("YYYY-MM-DD");
       const data = {
-        "data_sessione": formattedDate,
-        "note": note
-      }
-      addNewSession(data)
-      console.log(data)
-      console.log("operazione riuscita")
+        data_sessione: formattedDate,
+        note,
+      };
+      await addNewSession(data);
+      noteSessione.current.value = ""; // resetta il campo note
+      setPageSession((p) => p); // forza il refetch anche se il valore è lo stesso
+      console.log("Sessione aggiunta:", data);
+      fetchSessions()
     } catch (error) {
-      console.log(error)
+      console.error("Errore in handleAddSession", error);
     }
+  };
 
-  }
   return (
     <div className="p-2 sm:p-4">
       {/* Grid responsive: 1 colonna su mobile, 2 colonne su tablet+, 2x2 su desktop */}
@@ -83,6 +86,7 @@ const Dashboard = () => {
           <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4 text-white flex-shrink-0">
             Lista Workout 💪
           </h1>
+
           <div className="flex-1 min-h-0">
             {sessionsIndex === undefined && (
               <p className="text-center text-violet-200">Caricamento...</p>
@@ -92,9 +96,21 @@ const Dashboard = () => {
             )}
             {sessionsIndex && (
               <SessionsComponets sessions={sessionsIndex.sessions} />
+
             )}
 
           </div>
+          {sessionsIndex && (
+            <>
+              <div className="flex justify-center items-center gap-2 mt-3">
+                <Button disabled={pageSession === 1} onClick={() => setPageSession(c => c - 1)}>+</Button>
+                <Button disabled={pageSession >= sessionsIndex.totalPages} onClick={() => setPageSession(c => c + 1)}>-</Button>
+              </div>
+
+
+            </>
+          )}
+
         </div>
 
         {/* Sezione 2 - In alto a destra / seconda su mobile */}
@@ -102,13 +118,6 @@ const Dashboard = () => {
           <h2 className="text-lg sm:text-xl font-bold text-center mb-3 sm:mb-4 text-white">
             ExerciseList
           </h2>
-          {sessionsIndex && (
-            <>
-               <Button disabled={pageSession === 1} onClick={() => setPageSession(c => c - 1)}>+</Button>
-              <Button disabled={pageSession >= sessionsIndex.totalPages} onClick={() => setPageSession(c => c + 1)}>-</Button>
-             
-            </>
-          )}
 
           <div className="flex-1 text-violet-200">
 

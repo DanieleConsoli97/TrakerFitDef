@@ -9,7 +9,7 @@ const AuthProvider = ({ children }) => {
 
 
     const { loginAction, registerAction, logOutAction, token, refreshToken } = useAuthActions();
-    const { sessionsIndex } = useSessionsAction(token);
+    const { sessionsIndex,fetchSessions } = useSessionsAction(token);
     const { exercisesIndex, addExerciseToSession, addSetToWorkoutExercise } = useExercisesAction(token);
     const { detailsSessions,addNewSession } = useSessions(token)
 
@@ -25,7 +25,8 @@ const AuthProvider = ({ children }) => {
         addExerciseToSession,
         addSetToWorkoutExercise,
         detailsSessions,
-        addNewSession
+        addNewSession,
+        fetchSessions
     };
     console.log(contextValue)
     return (
