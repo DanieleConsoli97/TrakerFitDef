@@ -16,7 +16,7 @@ export default function CardSessions({ sessions }) {
             <CardBody className="p-3 sm:p-4">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-1 sm:space-y-0">
                 <h2 className="text-sm sm:text-base font-semibold text-foreground">
-                  Sessione: {session.id}
+                  Sessione: {session.note}
                 </h2>
                 <p className="text-xs sm:text-sm text-default-500">
                   Inizio: {session.data_sessione}
