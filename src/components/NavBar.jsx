@@ -96,7 +96,7 @@ export default function NavbarComp() {
   };
 
   return (
-   <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className="border border-red-500">
+    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className="">
       {/* Mobile: Toggle Button */}
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
@@ -148,9 +148,8 @@ export default function NavbarComp() {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${
-                      isActivePath(item.path) ? "text-primary font-semibold" : ""
-                    }`}
+                    className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${isActivePath(item.path) ? "text-primary font-semibold" : ""
+                      }`}
                   >
                     <span className="mr-2">{item.icon}</span>
                     {item.name}
@@ -218,8 +217,8 @@ export default function NavbarComp() {
                       item.color === "danger"
                         ? "rgb(var(--danger))"
                         : isActivePath(item.path)
-                        ? "rgb(var(--primary))"
-                        : "rgb(var(--foreground))",
+                          ? "rgb(var(--primary))"
+                          : "rgb(var(--foreground))",
                   }}
                 >
                   <span className="text-lg">{item.icon}</span>
