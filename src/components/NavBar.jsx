@@ -93,6 +93,7 @@ export default function NavbarComp() {
       navigate(item.path);
     }
     setIsMenuOpen(false);
+    
   };
 
   return (
