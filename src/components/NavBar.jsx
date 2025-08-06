@@ -23,7 +23,7 @@ export const FitnessLogo = () => (
     width="50"
     src={Logo}
     alt="Fitness App Control Logo"
-    className="object-contain"
+    className="object-contain min-w-[50px]"
   />
 );
 
@@ -96,28 +96,29 @@ export default function NavbarComp() {
   };
 
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+   <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className="border border-red-500">
       {/* Mobile: Toggle Button */}
-      
       <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        />
+        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
       </NavbarContent>
 
       {/* Mobile: Brand Centered */}
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
-          <FitnessLogo />
-          <p className="font-bold text-inherit">FitnessControl</p>
+          <div className="flex items-center gap-2">
+            <FitnessLogo />
+            <p className="font-bold text-inherit">FitnessControl</p>
+          </div>
         </NavbarBrand>
       </NavbarContent>
 
       {/* Desktop: Brand Left */}
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarBrand>
-          <FitnessLogo />
-          <p className="font-bold text-inherit">FitnessControl</p>
+          <div className="flex items-center gap-2">
+            <FitnessLogo />
+            <p className="font-bold text-inherit">FitnessControl</p>
+          </div>
         </NavbarBrand>
       </NavbarContent>
 
@@ -136,7 +137,6 @@ export default function NavbarComp() {
           </NavbarItem>
         ))}
 
-        {/* Dropdowns for other sections */}
         {menuSections.slice(1, -1).map((section) => (
           <NavbarItem key={section.label}>
             <div className="relative group">

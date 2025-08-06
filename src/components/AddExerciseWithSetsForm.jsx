@@ -3,11 +3,17 @@ import { useState, useEffect } from 'react';
 import { getAllExercises, addExerciseToSession, addSetToWorkoutExercise } from '../services/apiService';
 // Importiamo useAuth per accedere al token
 import { useAuth } from '../contexts/AuthProvider';
+import { SelectItem } from '@heroui/react';
+
+
+
+import { Input, Select, Button } from "@heroui/react";
+import { Icon } from "@iconify/react";
 
 function AddExerciseWithSetsForm({ sessionId, onComplete }) {
     // Otteniamo il token dal nostro contesto di autenticazione
     const { token } = useAuth();
-    
+
     // Gli stati del componente rimangono identici
     const [exerciseCatalog, setExerciseCatalog] = useState([]);
     const [selectedExerciseId, setSelectedExerciseId] = useState('');
@@ -23,7 +29,7 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
                 const allExercises = await getAllExercises(token);
                 setExerciseCatalog(allExercises);
             } catch (err) {
-                setError("Impossibile caricare gli esercizi.");
+                setError("Impossibile caricare gli esercizi.", err);
             }
         };
         fetchExercises();
@@ -59,8 +65,8 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
 
         try {
             // **FASE 1: Passiamo il token alla chiamata API**
-            const exerciseResponse = await addExerciseToSession(token, sessionId, { 
-                esercizio_id: selectedExerciseId 
+            const exerciseResponse = await addExerciseToSession(token, sessionId, {
+                esercizio_id: selectedExerciseId
             });
             const { workoutExerciseId } = exerciseResponse;
 
@@ -70,14 +76,14 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
 
             // **FASE 2: Passiamo il token a ogni chiamata per aggiungere i set**
             for (const set of sets) {
-                if(set.ripetizioni && set.peso) {
+                if (set.ripetizioni && set.peso) {
                     await addSetToWorkoutExercise(token, sessionId, workoutExerciseId, set);
                 }
             }
-            
+
             alert('Esercizio e set aggiunti con successo!');
             if (onComplete) onComplete();
-            
+
             // Resetta il form
             setSelectedExerciseId('');
             setSets([{ serie_num: 1, ripetizioni: '', peso: '' }]);
@@ -93,17 +99,17 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
     return (
         <form onSubmit={handleSubmit} style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px' }}>
             {/* ... il tuo JSX per il form non cambia ... */}
-            <h3>Aggiungi Esercizio alla Sessione</h3>
+            <h3>Aggiungi Esercizio alla Sessionef</h3>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            
+
             <div>
                 <label>Scegli Esercizio:</label>
-                <select value={selectedExerciseId} onChange={(e) => setSelectedExerciseId(e.target.value)} required>
-                    <option value="">-- Seleziona un esercizio --</option>
+                <Select value={selectedExerciseId} onChange={(e) => setSelectedExerciseId(e.target.value)} required>
+                    <SelectItem value="">-- Seleziona un esercizio </SelectItem>
                     {exerciseCatalog.map(ex => (
                         <option key={ex.id} value={ex.id}>{ex.nome}</option>
                     ))}
-                </select>
+                </Select>
             </div>
 
             <hr />
@@ -120,9 +126,9 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
                 ))}
                 <button type="button" onClick={handleAddSet}>+ Aggiungi Set</button>
             </div>
-            
+
             <hr />
-            
+
             <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Salvataggio in corso...' : 'Salva Esercizio'}
             </button>
