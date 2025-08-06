@@ -14,90 +14,98 @@ import {
   Divider,
 } from "@heroui/react";
 
-import Logo from '../assets/AppControl.png'
+import Logo from "../assets/AppControl.png";
 import { useTheme } from "../provider/ThemeProvider";
 
-export const FitnessLogo = () => {
-  return (
-    <img
-      height="50"
-      width="50"
-      src={Logo}
-      alt="Fitness App Control Logo"
-      className="object-contain"
-    />
-  );
-};
+export const FitnessLogo = () => (
+  <img
+    height="50"
+    width="50"
+    src={Logo}
+    alt="Fitness App Control Logo"
+    className="object-contain"
+  />
+);
 
-const navigationItems = [
-  { name: "Home", path: "/home", icon: "🏠" },
-  { name: "Contatti", path: "/contatti", icon: "📞" },
-  { name: "Integrations", path: "/integrations", icon: "🔗" }
-];
-
-// Menu items specifici per l'app fitness (solo mobile menu)
-const fitnessMenuItems = [
-  // Navigazione principale
-  ...navigationItems,
-
-  // Sezione Fitness
-  { type: "divider", label: "FITNESS" },
-  { name: "Dashboard", path: "/dashboard", icon: "📊" },
-  { name: "I Miei Allenamenti", path: "/workouts", icon: "💪" },
-  { name: "Progressi", path: "/progress", icon: "📈" },
-  { name: "Statistiche", path: "/analytics", icon: "📉" },
-  { name: "Programmi", path: "/programs", icon: "📋" },
-
-  // Sezione Account
-  { type: "divider", label: "ACCOUNT" },
-  { name: "Profilo", path: "/profile", icon: "👤" },
-  { name: "Impostazioni", path: "/settings", icon: "⚙️" },
-  { name: "Notifiche", path: "/notifications", icon: "🔔" },
-
-  // Sezione Supporto
-  { type: "divider", label: "SUPPORTO" },
-  { name: "Aiuto & FAQ", path: "/help", icon: "❓" },
-  { name: "Feedback", path: "/feedback", icon: "💬" },
-
-  // Azioni
-  { type: "divider", label: "AZIONI" },
-  { name: "Logout", path: "/logout", icon: "🚪", isLogout: true, color: "danger" }
-];
-
-
-export default function App() {
-
+export default function NavbarComp() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const { logOutAction, isAuthenticated } = useAuth();
 
-  console.log(isAuthenticated)
+  const isActivePath = (path) => location.pathname === path;
 
+  const menuSections = [
+    {
+      label: "Navigazione",
+      items: [
+        { name: "Home", path: "/home", icon: "🏠" },
+        { name: "Contatti", path: "/contatti", icon: "📞" },
+        { name: "Integrations", path: "/integrations", icon: "🔗" },
+        ...(isAuthenticated
+          ? [{ name: "Dashboard", path: "/dashboard", icon: "📊" }]
+          : []),
+      ],
+    },
+    {
+      label: "Fitness",
+      items: [
+        { name: "I Miei Allenamenti", path: "/workouts", icon: "💪" },
+        { name: "Progressi", path: "/progress", icon: "📈" },
+        { name: "Statistiche", path: "/analytics", icon: "📉" },
+        { name: "Programmi", path: "/programs", icon: "📋" },
+      ],
+    },
+    {
+      label: "Account",
+      items: [
+        { name: "Profilo", path: "/profile", icon: "👤" },
+        { name: "Impostazioni", path: "/settings", icon: "⚙️" },
+        { name: "Notifiche", path: "/notifications", icon: "🔔" },
+      ],
+    },
+    {
+      label: "Supporto",
+      items: [
+        { name: "Aiuto & FAQ", path: "/help", icon: "❓" },
+        { name: "Feedback", path: "/feedback", icon: "💬" },
+      ],
+    },
+    {
+      label: "Azioni",
+      items: [
+        {
+          name: "Logout",
+          path: "/logout",
+          icon: "🚪",
+          isLogout: true,
+          color: "danger",
+        },
+      ],
+    },
+  ];
 
   const handleMenuItemClick = (item) => {
     if (item.isLogout) {
-
-      console.log("Effettuando logout...");
-      logOutAction()
+      logOutAction();
     } else {
       navigate(item.path);
     }
-    setIsMenuOpen(false); // Chiudi menu dopo click
+    setIsMenuOpen(false);
   };
 
-  const isActivePath = (path) => location.pathname === path;
   return (
     <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
       {/* Mobile: Toggle Button */}
+      
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
       </NavbarContent>
 
-      {/* Mobile: Brand Centrato */}
+      {/* Mobile: Brand Centered */}
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           <FitnessLogo />
@@ -105,7 +113,7 @@ export default function App() {
         </NavbarBrand>
       </NavbarContent>
 
-      {/* Desktop: Brand a Sinistra */}
+      {/* Desktop: Brand Left */}
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarBrand>
           <FitnessLogo />
@@ -113,9 +121,9 @@ export default function App() {
         </NavbarBrand>
       </NavbarContent>
 
-      {/* Desktop: Link Centrali */}
+      {/* Desktop: Central Navigation */}
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {navigationItems.map((item) => (
+        {menuSections[0].items.map((item) => (
           <NavbarItem key={item.name} isActive={isActivePath(item.path)}>
             <Link
               to={item.path}
@@ -128,23 +136,34 @@ export default function App() {
           </NavbarItem>
         ))}
 
-        {isAuthenticated && (
-          <NavbarItem isActive={isActivePath("/dashboard")}>
-            <Link
-              to="/dashboard"
-              color={isActivePath("/dashboard") ? "primary" : "foreground"}
-              className="flex items-center gap-2"
-            >
-              <span>📊</span>
-              Dashboard
-            </Link>
+        {/* Dropdowns for other sections */}
+        {menuSections.slice(1, -1).map((section) => (
+          <NavbarItem key={section.label}>
+            <div className="relative group">
+              <button className="flex items-center gap-2 font-medium hover:text-primary">
+                {section.label} ▼
+              </button>
+              <div className="absolute left-0 top-full bg-background shadow-lg rounded-lg hidden group-hover:block z-50 min-w-[180px] p-2">
+                {section.items.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${
+                      isActivePath(item.path) ? "text-primary font-semibold" : ""
+                    }`}
+                  >
+                    <span className="mr-2">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </NavbarItem>
-        )}
+        ))}
       </NavbarContent>
 
-      {/* Azioni a Destra */}
+      {/* Desktop: Right Actions */}
       <NavbarContent justify="end">
-        {/* //SECTION -  */}
         {!isAuthenticated ? (
           <>
             <NavbarItem className="hidden lg:flex">
@@ -163,90 +182,75 @@ export default function App() {
             </NavbarItem>
           </>
         ) : (
-          <>
-            <NavbarItem>
-              <Button
-                onClick={logOutAction}
-                color="danger"
-                variant="flat"
-              >
-                Logout
-              </Button>
-            </NavbarItem>
-          </>
+          <NavbarItem>
+            <Button onClick={logOutAction} color="danger" variant="flat">
+              Logout
+            </Button>
+          </NavbarItem>
         )}
-
-        {/* Switch visibile sempre */}
         <NavbarItem className="hidden lg:flex">
           <Switch
-            isSelected={theme === 'dark'}
+            isSelected={theme === "dark"}
             onValueChange={toggleTheme}
             size="sm"
             className="bg-content1 border border-divider rounded-full p-2 shadow-lg"
           >
-            {theme === 'dark' ? "☀️" : "🌙"}
+            {theme === "dark" ? "☀️" : "🌙"}
           </Switch>
         </NavbarItem>
-
-
       </NavbarContent>
 
-      {/* Menu Mobile */}
+      {/* Mobile Menu */}
       <NavbarMenu>
-        {fitnessMenuItems.map((item, index) => {
-          // Renderizza divisori
-          if (item.type === "divider") {
-            return (
-              <div key={`divider-${index}`} className="py-2">
-                <p className="text-xs font-semibold text-default-500 uppercase tracking-wide px-2 py-1">
-                  {item.label}
-                </p>
-                <Divider />
-              </div>
-            );
-          }
+        {menuSections.map((section, index) => (
+          <div key={`section-${index}`} className="py-2">
+            <p className="text-xs font-semibold text-default-500 uppercase tracking-wide px-2 py-1">
+              {section.label}
+            </p>
+            <Divider />
+            {section.items.map((item, itemIndex) => (
+              <NavbarMenuItem key={`${item.name}-${itemIndex}`}>
+                <button
+                  className="w-full text-left py-3 px-2 rounded-lg flex items-center gap-3 hover:bg-default-100 transition-colors"
+                  onClick={() => handleMenuItemClick(item)}
+                  style={{
+                    color:
+                      item.color === "danger"
+                        ? "rgb(var(--danger))"
+                        : isActivePath(item.path)
+                        ? "rgb(var(--primary))"
+                        : "rgb(var(--foreground))",
+                  }}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="font-medium">{item.name}</span>
+                  {isActivePath(item.path) && (
+                    <span className="ml-auto text-primary">●</span>
+                  )}
+                </button>
+              </NavbarMenuItem>
+            ))}
+          </div>
+        ))}
 
-          // Renderizza menu items
-          return (
-            <NavbarMenuItem key={`${item.name}-${index}`}>
-              <button
-                className="w-full text-left py-3 px-2 rounded-lg flex items-center gap-3 hover:bg-default-100 transition-colors"
-                onClick={() => handleMenuItemClick(item)}
-                style={{
-                  color: item.color === "danger"
-                    ? "rgb(var(--danger))"
-                    : isActivePath(item.path)
-                      ? "rgb(var(--primary))"
-                      : "rgb(var(--foreground))"
-                }}
-              >
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium">{item.name}</span>
-                {isActivePath(item.path) && (
-                  <span className="ml-auto text-primary">●</span>
-                )}
-              </button>
-            </NavbarMenuItem>
-          );
-        })}
-
-        {/* Switch tema nel menu mobile */}
-
+        {/* Tema: switch mobile */}
         <NavbarMenuItem>
           <div className="flex items-center justify-between w-full py-3 px-2">
             <div className="flex items-center gap-3">
-              <span className="text-lg">{theme === 'dark' ? "☀️" : "🌙"}</span>
-              <span className="font-medium">Tema {theme === 'dark' ? "White" : "Dark"}</span>
+              <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
+              <span className="font-medium">
+                Tema {theme === "dark" ? "White" : "Dark"}
+              </span>
             </div>
             <Switch
-              isSelected={theme === 'dark'}
+              isSelected={theme === "dark"}
               onValueChange={toggleTheme}
               size="sm"
             />
           </div>
         </NavbarMenuItem>
 
-        {/* Footer del menu con versione */}
+        {/* Footer: versione */}
         <NavbarMenuItem>
           <div className="pt-4 pb-2 px-2">
             <p className="text-xs text-default-400 text-center">

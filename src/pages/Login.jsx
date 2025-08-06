@@ -145,11 +145,7 @@ function App() {
                 </Button>
               </div>
             </div>
-            {submitted && (
-              <div className="text-small text-default-500 mt-4 break-all">
-                Submitted data: <pre className="whitespace-pre-wrap break-all">{JSON.stringify(submitted, null, 2)}</pre>
-              </div>
-            )}
+            
           </Form>
         </CardBody>
       </Card>
