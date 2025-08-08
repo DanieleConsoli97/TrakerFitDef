@@ -36,54 +36,37 @@ export default function NavbarComp() {
 
   const isActivePath = (path) => location.pathname === path;
 
+  // Sezioni menu filtrate in base all'autenticazione
   const menuSections = [
     {
       label: "Navigazione",
       items: [
-        { name: "Home", path: "/home", icon: "🏠" },
-        { name: "Contatti", path: "/contatti", icon: "📞" },
-        { name: "Integrations", path: "/integrations", icon: "🔗" },
-        ...(isAuthenticated
-          ? [{ name: "Dashboard", path: "/dashboard", icon: "📊" }]
-          : []),
+        
+        ...(isAuthenticated ? [{ name: "Dashboard", path: "/dashboard", icon: "📊" }] : []),
       ],
     },
-    {
-      label: "Fitness",
-      items: [
-        { name: "I Miei Allenamenti", path: "/workouts", icon: "💪" },
-        { name: "Progressi", path: "/progress", icon: "📈" },
-        { name: "Statistiche", path: "/analytics", icon: "📉" },
-        { name: "Programmi", path: "/programs", icon: "📋" },
-      ],
-    },
-    {
-      label: "Account",
-      items: [
-        { name: "Profilo", path: "/profile", icon: "👤" },
-        { name: "Impostazioni", path: "/settings", icon: "⚙️" },
-        { name: "Notifiche", path: "/notifications", icon: "🔔" },
-      ],
-    },
-    {
-      label: "Supporto",
-      items: [
-        { name: "Aiuto & FAQ", path: "/help", icon: "❓" },
-        { name: "Feedback", path: "/feedback", icon: "💬" },
-      ],
-    },
-    {
-      label: "Azioni",
-      items: [
-        {
-          name: "Logout",
-          path: "/logout",
-          icon: "🚪",
-          isLogout: true,
-          color: "danger",
-        },
-      ],
-    },
+    ...(isAuthenticated
+      ? [
+          {
+            label: "Fitness",
+            items: [
+              { name: "I Miei Allenamenti", path: "/workouts", icon: "💪" },
+              { name: "Progressi", path: "/progress", icon: "📈" },
+              { name: "Statistiche", path: "/analytics", icon: "📉" },
+              { name: "Programmi", path: "/programs", icon: "📋" },
+            ],
+          },
+          {
+            label: "Account",
+            items: [
+              { name: "Profilo", path: "/profile", icon: "👤" },
+              { name: "Impostazioni", path: "/settings", icon: "⚙️" },
+              { name: "Notifiche", path: "/notifications", icon: "🔔" },
+              { name: "Logout", path: "#", icon: "🚪", isLogout: true, color: "danger" },
+            ],
+          },
+        ]
+      : [])
   ];
 
   const handleMenuItemClick = (item) => {
@@ -93,102 +76,103 @@ export default function NavbarComp() {
       navigate(item.path);
     }
     setIsMenuOpen(false);
-    
   };
 
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen} className="">
-      {/* Mobile: Toggle Button */}
+    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+      {/* Mobile: Toggle */}
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
       </NavbarContent>
 
-      {/* Mobile: Brand Centered */}
+      {/* Mobile: Logo centrato */}
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>
           <div className="flex items-center gap-2">
             <FitnessLogo />
-            <p className="font-bold text-inherit">FitnessControl</p>
+            <p className="font-bold">FitnessControl</p>
           </div>
         </NavbarBrand>
       </NavbarContent>
 
-      {/* Desktop: Brand Left */}
+      {/* Desktop: Logo a sinistra */}
       <NavbarContent className="hidden sm:flex" justify="start">
         <NavbarBrand>
           <div className="flex items-center gap-2">
             <FitnessLogo />
-            <p className="font-bold text-inherit">FitnessControl</p>
+            <p className="font-bold">FitnessControl</p>
           </div>
         </NavbarBrand>
       </NavbarContent>
 
-      {/* Desktop: Central Navigation */}
+      {/* Desktop: Navigazione */}
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {menuSections[0].items.map((item) => (
-          <NavbarItem key={item.name} isActive={isActivePath(item.path)}>
-            <Link
-              to={item.path}
-              color={isActivePath(item.path) ? "primary" : "foreground"}
-              className="flex items-center gap-2"
-            >
-              <span>{item.icon}</span>
-              {item.name}
-            </Link>
-          </NavbarItem>
-        ))}
-
-        {menuSections.slice(1, -1).map((section) => (
-          <NavbarItem key={section.label}>
-            <div className="relative group">
-              <button className="flex items-center gap-2 font-medium hover:text-primary">
-                {section.label} ▼
-              </button>
-              <div className="absolute left-0 top-full bg-background shadow-lg rounded-lg hidden group-hover:block z-50 min-w-[180px] p-2">
-                {section.items.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${isActivePath(item.path) ? "text-primary font-semibold" : ""
+        {menuSections.map((section, idx) =>
+          idx === 0 ? (
+            section.items.map((item) => (
+              <NavbarItem key={item.name} isActive={isActivePath(item.path)}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center gap-2 ${isActivePath(item.path) ? "text-primary font-semibold" : ""}`}
+                >
+                  <span>{item.icon}</span>
+                  {item.name}
+                </Link>
+              </NavbarItem>
+            ))
+          ) : (
+            <NavbarItem key={section.label}>
+              <div className="relative group">
+                <button className="flex items-center gap-2 font-medium hover:text-primary">
+                  {section.label} ▼
+                </button>
+                <div className="absolute left-0 top-full bg-background shadow-lg rounded-lg hidden group-hover:block z-50 min-w-[180px] p-2">
+                  {section.items.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${
+                        isActivePath(item.path) 
+                          ? "text-primary font-semibold" 
+                          : item.color === "danger" 
+                            ? "text-danger" 
+                            : ""
                       }`}
-                  >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.name}
-                  </Link>
-                ))}
+                      onClick={(e) => {
+                        if (item.isLogout) {
+                          e.preventDefault();
+                          logOutAction();
+                        }
+                      }}
+                    >
+                      <span className="mr-2">{item.icon}</span>
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-          </NavbarItem>
-        ))}
+            </NavbarItem>
+          )
+        )}
       </NavbarContent>
 
-      {/* Desktop: Right Actions */}
+      {/* Desktop: Azioni */}
       <NavbarContent justify="end">
         {!isAuthenticated ? (
           <>
-            <NavbarItem className="hidden lg:flex">
-              <Link to="/login" className="text-foreground hover:text-primary">
+            <NavbarItem className="hidden sm:flex">
+              <Button onClick={() => navigate("/login")} color="success" variant="flat">
                 Login
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Button
-                onClick={() => navigate("/signup")}
-                color="warning"
-                variant="flat"
-              >
+              </Button>
+            </NavbarItem >
+            <NavbarItem  className="hidden sm:flex">
+              <Button onClick={() => navigate("/signup")} color="warning" variant="flat">
                 Sign Up
               </Button>
             </NavbarItem>
           </>
-        ) : (
-          <NavbarItem>
-            <Button onClick={logOutAction} color="danger" variant="flat">
-              Logout
-            </Button>
-          </NavbarItem>
-        )}
-        <NavbarItem className="hidden lg:flex">
+        ) : null}
+        <NavbarItem className="hidden sm:flex">
           <Switch
             isSelected={theme === "dark"}
             onValueChange={toggleTheme}
@@ -218,8 +202,8 @@ export default function NavbarComp() {
                       item.color === "danger"
                         ? "rgb(var(--danger))"
                         : isActivePath(item.path)
-                          ? "rgb(var(--primary))"
-                          : "rgb(var(--foreground))",
+                        ? "rgb(var(--primary))"
+                        : "rgb(var(--foreground))",
                   }}
                 >
                   <span className="text-lg">{item.icon}</span>
@@ -233,13 +217,13 @@ export default function NavbarComp() {
           </div>
         ))}
 
-        {/* Tema: switch mobile */}
+        {/* Tema mobile */}
         <NavbarMenuItem>
           <div className="flex items-center justify-between w-full py-3 px-2">
             <div className="flex items-center gap-3">
               <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
               <span className="font-medium">
-                Tema {theme === "dark" ? "White" : "Dark"}
+                Tema {theme === "dark" ? "Light" : "Dark"}
               </span>
             </div>
             <Switch
@@ -250,7 +234,7 @@ export default function NavbarComp() {
           </div>
         </NavbarMenuItem>
 
-        {/* Footer: versione */}
+        {/* Footer */}
         <NavbarMenuItem>
           <div className="pt-4 pb-2 px-2">
             <p className="text-xs text-default-400 text-center">
