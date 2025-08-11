@@ -70,7 +70,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="md:container space-y-6 p-6">
+    <div className="md:container space-y-6 md:p-6 p-2">
       {/* Header con saluto e streak */}
       <div className="bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-6 text-white">
         <div className="flex justify-between items-start">
