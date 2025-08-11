@@ -28,7 +28,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem-1px)] bg-gray-950">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem-1px)] dark:bg-gray-950">
       {/* Header Section */}
       <div className="text-center mb-12">
         <picture className="mb-8 block">

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { Button } from "@heroui/react";
+import { Accordion, AccordionItem, Button } from "@heroui/react";
 import ExerciseItem from "./ExerciseItem"; // Importa il componente ExerciseItem
 import { Calendar1, ChevronLeft } from "lucide-react";
 import { Input, Select, SelectItem } from "@heroui/react";
@@ -76,10 +76,10 @@ const SessionDetails = () => {
     <>
 
 
-      <div className="mt-4 space-y-4 p-6">
-        <button className="flex items-center text-2xl font-bold mb-5"><ChevronLeft /> Torna alle sessioni</button>
-        <div className="p-6 ">
+      <div className="md:container mt-4 space-y-4 md:p-6 p-2  ">
 
+        <div className="md:p-6  ">
+          <button className="flex items-center text-2xl font-bold mb-5"><ChevronLeft /> Torna alle sessioni</button>
           <h1 className="text-2xl font-bold mb-4">{session.note}</h1>
           <p className="flex items-center text-2xl ">
             <strong className="flex items-center text-2xl font-bold mb-5"> <Calendar1 className="mr-2" />  {new Date(session.data_sessione).toLocaleDateString("it-IT")} </strong>
@@ -247,6 +247,8 @@ const SessionDetails = () => {
                          shadow-lg text-sm sm:text-base"
                         ref={exercisesValue}
                         defaultValue=""
+                        label="Scegli un esercizio..."
+
                       >
                         <SelectItem value="" disabled className="bg-violet-800 dark:bg-violet-800 light:bg-gray-100 text-violet-300 dark:text-violet-300 light:text-gray-500">
                           Scegli un esercizio...
@@ -298,20 +300,22 @@ const SessionDetails = () => {
             <div className="mt-4">
               <div>
                 <h2 className="text-xl font-semibold mb-2">Esercizi</h2>
-
               </div>
 
-              <div className="max-h-[600px] overflow-y-auto">
-                {session.esercizi.map((esercizio) => (
-                  <ExerciseItem
-                    key={esercizio.workoutExerciseId}
-                    esercizio={esercizio}
-                    sessionId={id}
-                    fetchSessionDetails={fetchSessionDetails}
-                    addSetToWorkoutExercise={addSetToWorkoutExercise}
-                    setError={setError}
-                  />
-                ))}
+              <div className="max-h-[600px]  overflow-y-auto">
+                <Accordion className="p-0 " variant="splitted">
+                  {session.esercizi.map((esercizio, index) => (
+                    <AccordionItem  key={esercizio.workoutExerciseId} aria-label={esercizio.nomeEsercizio?.trim() || `Esercizio ${index + 1}`} title={esercizio.nomeEsercizio || `Esercizio ${index + 1}`}>
+                      <ExerciseItem
+                        esercizio={esercizio}
+                        sessionId={id}
+                        fetchSessionDetails={fetchSessionDetails}
+                        addSetToWorkoutExercise={addSetToWorkoutExercise}
+                        setError={setError}
+                      />
+                    </AccordionItem>
+                  ))}
+                </Accordion>
               </div>
             </div>
           ) : (

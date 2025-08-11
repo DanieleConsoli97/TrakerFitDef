@@ -8,6 +8,9 @@ export default {
     "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
+    container: {
+      center: true,
+    },
     extend: {},
   },
   darkMode: "class",
@@ -27,7 +30,7 @@ export default {
         },
         dark: {
           colors: {
-            background: "#000000",
+            background: "#030712", // gray-950 hex value
             foreground: "#ECEDEE",
             primary: {
               50: "#3B096C",

@@ -70,19 +70,19 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 p-6">
-       {/* Header con saluto e streak */}
+    <div className="md:container space-y-6 p-6">
+      {/* Header con saluto e streak */}
       <div className="bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl p-6 text-white">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-bold mb-1">Ciao, Atleta! 💪</h2>
             <p className="text-blue-100 mb-4">Sei in ottima forma oggi!</p>
             <div className="flex items-center space-x-4">
-              
+
             </div>
           </div>
           <div className="text-right">
-            
+
             <div className="text-sm text-blue-100">Allenamenti</div>
           </div>
         </div>
@@ -191,10 +191,10 @@ const Dashboard = () => {
             <div className="space-y-2">
               <label className="text-white">Serie</label>
               <input className="w-full p-2 rounded bg-white text-black" ref={serieValue} type="number" />
-              
+
               <label className="text-white">Ripetizioni</label>
               <input className="w-full p-2 rounded bg-white text-black" ref={ripetizioniValue} type="number" />
-              
+
               <label className="text-white">Peso</label>
               <input className="w-full p-2 rounded bg-white text-black" ref={pesoValue} type="number" />
             </div>
