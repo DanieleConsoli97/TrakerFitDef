@@ -88,7 +88,7 @@ const Dashboard = () => {
         </div>
       </div>
       {/* Grid: 1 colonna su mobile, 2 colonne su desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
         {/* Sezione 1 - Lista Workout */}
         <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4">
           <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4 text-white">

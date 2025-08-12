@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
 import SessionsComponets from "./components/SessionsComponets"
 import SessionDetails from "./components/SessionDetails"
+import { Sessions } from "./pages/Sessions"
 const App = () => {
 
     return (
@@ -21,7 +22,7 @@ const App = () => {
                 <Route path={"/signup"} element={<SingUp />} />
                 <Route path={"/contatti"} element={<Contatti />} />
                 <Route path={"/esercizi"} element={<ExerciseDetail />} />
-                <Route path={"/session"} element={<SessionsComponets />} />
+                <Route path={"/sessions"} element={<Sessions />} />
                 {/* rotte protette */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/session/:id" element={<ProtectedRoute><SessionDetails /></ProtectedRoute>} />

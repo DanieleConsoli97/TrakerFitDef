@@ -8,6 +8,7 @@ import ExerciseItem from "./ExerciseItem"; // Importa il componente ExerciseItem
 import { Calendar1, ChevronLeft } from "lucide-react";
 import { Input, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 
 const SessionDetails = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const SessionDetails = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const exercisesValue = useRef();
+  const navigate = useNavigate();
 
   // Funzione per caricare i dettagli della sessione
   const fetchSessionDetails = async () => {
@@ -79,7 +81,7 @@ const SessionDetails = () => {
       <div className="md:container mt-4 space-y-4 md:p-6 p-2  ">
 
         <div className="md:p-6  ">
-          <button className="flex items-center text-2xl font-bold mb-5"><ChevronLeft /> Torna alle sessioni</button>
+          <button onClick={()=>navigate("/sessions")} className="flex items-center text-2xl font-bold mb-5"><ChevronLeft /> Torna alle sessioni</button>
           <h1 className="text-2xl font-bold mb-4">{session.note}</h1>
           <p className="flex items-center text-2xl ">
             <strong className="flex items-center text-2xl font-bold mb-5"> <Calendar1 className="mr-2" />  {new Date(session.data_sessione).toLocaleDateString("it-IT")} </strong>
