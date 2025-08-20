@@ -9,6 +9,7 @@ import { Card, CardFooter, Image } from "@heroui/react";
 import imageExercise from "../assets/exer.png";
 import imageMassimale from "../assets/ProgettoMassimale.png";
 import imageSessione from "../assets/ProgettoSessioni.png";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { sessionsIndex, exercisesIndex, addSetToWorkoutExercise, addExerciseToSession, addNewSession, fetchSessions } = useAuth();
@@ -95,29 +96,6 @@ const Dashboard = () => {
       </div>
       {/* Grid: 1 colonna su mobile, 1 colonne su desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Sezione 1 - Lista Workout */}
-        <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4 text-white">
-            Lista Workout 💪
-          </h1>
-          <div className="max-h-[300px] overflow-y-auto">
-            {sessionsIndex === undefined && (
-              <p className="text-center text-violet-200">Caricamento...</p>
-            )}
-            {sessionsIndex === null && (
-              <p className="text-center text-red-300">Errore nel caricamento delle sessioni</p>
-            )}
-            {sessionsIndex && (
-              <SessionsComponets sessions={sessionsIndex.sessions} />
-            )}
-          </div>
-          {sessionsIndex && (
-            <div className="flex justify-center items-center gap-2 mt-3">
-              <Button disabled={pageSession === 1} onClick={() => setPageSession(c => c - 1)}>+</Button>
-              <Button disabled={pageSession >= sessionsIndex.totalPages} onClick={() => setPageSession(c => c + 1)}>-</Button>
-            </div>
-          )}
-        </div>
 
         {/* Sezione 2 - ExerciseList */}
         <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4">
@@ -241,9 +219,11 @@ const Dashboard = () => {
             src={imageSessione}
 
           />
+          <Link to={"/sessions"}>
           <CardFooter className="justify-center  before:bg-white/10 border-white/20 border-1 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
             <p className="text-tiny text-white/80">Lista Sessioni</p>
           </CardFooter>
+          </Link>
         </Card>
         <Card isFooterBlurred className="border-none aspect-[16/9]" radius="lg">
           <Image
@@ -253,9 +233,11 @@ const Dashboard = () => {
             src={imageMassimale}
             width={"100%"}
           />
+          <Link to={"/maximal"}>
           <CardFooter className="justify-center  before:bg-white/10 border-white/20 border-1 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
             <p className="text-tiny text-white/80"> Lista Massimali</p>
           </CardFooter>
+          </Link>
         </Card>
       </div>
     </div>

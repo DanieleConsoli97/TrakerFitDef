@@ -22,11 +22,12 @@ const App = () => {
                 <Route path={"/signup"} element={<SingUp />} />
                 <Route path={"/contatti"} element={<Contatti />} />
                 <Route path={"/esercizi"} element={<ExerciseDetail />} />
-                <Route path={"/sessions"} element={<Sessions />} />
+                
                 {/* rotte protette */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/session/:id" element={<ProtectedRoute><SessionDetails /></ProtectedRoute>} />
                 <Route path="/exercise/:id" element={<ProtectedRoute><ExerciseDetail /></ProtectedRoute>} />
+                <Route path={"/sessions"} element={<ProtectedRoute><Sessions /></ProtectedRoute>} />
                 <Route path="/NotFound" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/NotFound" replace />} />
             </Route>
