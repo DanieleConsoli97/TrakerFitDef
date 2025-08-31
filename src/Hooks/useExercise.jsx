@@ -1,9 +1,9 @@
 import React from 'react'
 const SERVER_URL_DEV = import.meta.env.VITE_SERVER_URL_DEV;
 const useExercise = (token) => {
-    
+
     const userToken = token || localStorage.getItem('token'); // Prendi il token dall'argomento o da localStorage
-    
+
     const indexExercises = async (page = 1) => {
         try {
             // Ho aggiunto il parametro 'page' per la paginazione
@@ -69,8 +69,8 @@ const useExercise = (token) => {
     };
 
     // Chiamata per aggiungere un set, richiede il token
-    const addSetToWorkoutExercise = async ( sessionId, workoutExerciseId, setData) => {
-        
+    const addSetToWorkoutExercise = async (sessionId, workoutExerciseId, setData) => {
+
         const response = await fetch(`${SERVER_URL_DEV}/api/sessions/${sessionId}/exercises/${workoutExerciseId}/sets`, {
             method: 'POST',
             headers: {
@@ -79,14 +79,14 @@ const useExercise = (token) => {
             },
             body: JSON.stringify(setData),
         })
-            const data = await response.json()
-            if (!response.ok) {
-                console.log(response)
-                throw new Error(data.message || 'Errore durante l inserimento dell esercizi');
-            }
+        const data = await response.json()
+        if (!response.ok) {
+            console.log(response)
+            throw new Error(data.message || 'Errore durante l inserimento dell esercizi');
+        }
 
-            return data.message
+        return data.message
     };
-    return { indexExercises,addExerciseToSession,addSetToWorkoutExercise };
+    return { indexExercises, addExerciseToSession, addSetToWorkoutExercise };
 }
 export default useExercise

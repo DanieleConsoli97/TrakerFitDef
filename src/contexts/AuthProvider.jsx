@@ -1,34 +1,35 @@
-import { createContext, useContext, } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import useAuthActions from '../Hooks/actionHooks/useAuthActions';
-import useSessionsAction from '../Hooks/actionHooks/useSessionsAction';
-import useExercisesAction from '../Hooks/actionHooks/useExerciseAction';
 import useSessions from '../Hooks/useSessions';
+// Importa anche useExercises...
+
 const AuthContext = createContext(null);
 
-const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
+    // 1. L'hook di autenticazione è il cuore di tutto
+    const auth = useAuthActions();
 
+    // 2. Gli hooks per i dati ricevono la funzione fetchWithAuth dall'hook di auth
+    const sessions = useSessions(auth.fetchWithAuth);
+    // const exercises = useExercises(auth.fetchWithAuth);
 
-    const { loginAction, registerAction, logOutAction, token, refreshToken } = useAuthActions();
-    const { sessionsIndex,fetchSessions } = useSessionsAction(token);
-    const { exercisesIndex, addExerciseToSession, addSetToWorkoutExercise } = useExercisesAction(token);
-    const { detailsSessions,addNewSession } = useSessions(token)
+    // Effetto per caricare i dati iniziali una volta che l'utente è autenticato
+    useEffect(() => {
+        // Se c'è un token e non abbiamo ancora caricato le sessioni
+        if (auth.token && !sessions.sessionsIndex) {
+            sessions.fetchSessions();
+        }
+        // ... potresti fare lo stesso per gli esercizi ...
+    }, [auth.token, sessions.sessionsIndex, sessions.fetchSessions]);
 
+    // 3. Uniamo tutto in un unico grande oggetto per il contesto
     const contextValue = {
-        token, // L'accessToken per le chiamate API
-        refreshToken, // Il refreshToken se ci servirà in futuro
-        loginAction,
-        logOutAction,
-        registerAction,
-        isAuthenticated: !!token,// Booleano che indica se l'utente è autenticato
-        sessionsIndex,
-        exercisesIndex,
-        addExerciseToSession,
-        addSetToWorkoutExercise,
-        detailsSessions,
-        addNewSession,
-        fetchSessions
+        ...auth, // token, refreshToken, loginAction, etc.
+        ...sessions, // sessionsIndex, isLoadingSessions, fetchSessions, etc.
+        // ...exercises, // exercisesIndex, etc.
+        isAuthenticated: !!auth.token
     };
-    console.log(contextValue)
+
     return (
         <AuthContext.Provider value={contextValue}>
             {children}
@@ -36,9 +37,6 @@ const AuthProvider = ({ children }) => {
     );
 }
 
-
-const useAuth = () => {
+export function useAuth() {
     return useContext(AuthContext);
 }
-
-export { AuthProvider, useAuth }

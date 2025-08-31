@@ -1,90 +1,48 @@
-// Il tuo hook, ma corretto e funzionante
-const SERVER_URL_DEV = import.meta.env.VITE_SERVER_URL_DEV;
+import { useState, useCallback } from 'react';
 
-const useSessions = (token) => {
+// NOTA: Questo hook ora riceve la funzione fetchWithAuth come argomento
+// per renderlo testabile e disaccoppiato dal contesto.
+const useSessions = (fetchWithAuth) => {
+    const [sessionsData, setSessionsData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const userToken = token || localStorage.getItem('token'); // Prendi il token dall'argomento o da localStorage
-
-    const indexSessions = async (page,limit) => {
-
+    const fetchSessions = useCallback(async (page = 1) => {
+        if (!fetchWithAuth) return; // Non fare nulla se la funzione non è pronta
+        setIsLoading(true);
+        setError(null);
         try {
-            // Ho aggiunto il parametro 'page' per la paginazione
-            const response = await fetch(`${SERVER_URL_DEV}/api/sessions?page=${page}&limit=${limit}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                }
-            });
-
-            // Leggiamo il corpo della risposta UNA SOLA VOLTA
-            const data = await response.json();
-
-            // Se la risposta non era OK, ora possiamo leggere il messaggio dall'oggetto 'data'
-            if (!response.ok) {
-                throw new Error(data.message || 'Errore durante il recupero delle sessioni');
-            }
-
-            // Il controllo sulla lunghezza ora viene fatto sull'array di dati effettivo
-            if (data.sessions.length === 0) {
-                // Non lanciamo un errore, ma restituiamo i dati vuoti,
-                // così il componente può mostrare "Nessuna sessione trovata".
-                return data;
-            }
-            console.log(data)
-            return data;
-
-        } catch (error) {
-            console.error('Errore nel recupero sessioni:', error.message);
-            throw error; // Rilanciamo l'errore per farlo gestire dal componente
+            const data = await fetchWithAuth(`/sessions?page=${page}`);
+            setSessionsData(data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setIsLoading(false);
         }
+    }, [fetchWithAuth]);
+
+    const detailsSessions = useCallback(async (sessionId) => {
+        if (!fetchWithAuth) return;
+        return fetchWithAuth(`/sessions/${sessionId}`);
+    }, [fetchWithAuth]);
+
+    const addNewSession = useCallback(async (sessionData) => {
+        if (!fetchWithAuth) return;
+        return fetchWithAuth('/sessions', {
+            method: 'POST',
+            body: JSON.stringify(sessionData),
+        });
+    }, [fetchWithAuth]);
+
+
+    return { 
+        sessionsIndex: sessionsData, // Manteniamo il nome che usi
+        isLoadingSessions: isLoading,
+        errorSessions: error,
+        fetchSessions,
+        detailsSessions,
+        addNewSession
     };
-
-    const detailsSessions = async (id) => {
-        console.log(userToken); // Per debug, puoi rimuoverlo in produzione
-        try {
-            const response = await fetch(`${SERVER_URL_DEV}/api/sessions/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Se la risposta non è OK, il server ha inviato un errore.
-                // Il messaggio di errore è direttamente in 'data.message'.
-                throw new Error(data.message || 'Errore durante il recupero della sessione.');
-            }
-
-            // A questo punto, 'data' è direttamente l'oggetto della sessione (sessionDetails)
-            // Non c'è bisogno di controllare data.sessions.length perché non è un array di sessioni.
-            console.log("Dettagli sessione ricevuti:", data); // Per vedere la struttura esatta
-            return data; // Restituisce l'oggetto sessione direttamente
-        } catch (error) {
-            console.error('Errore nel recupero dettagli sessione:', error.message);
-            throw error; // Rilanciamo l'errore per farlo gestire dal componente SessionDetails
-        }
-    };
-    const addNewSession = async (data) => {
-        try {
-            const response = await fetch(`${SERVER_URL_DEV}/api/sessions`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify(data),
-            })
-            return response
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    return { indexSessions, detailsSessions, addNewSession };
 };
-
 
 export default useSessions;

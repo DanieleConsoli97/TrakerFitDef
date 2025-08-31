@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound"
 import SessionsComponets from "./components/SessionsComponets"
 import SessionDetails from "./components/SessionDetails"
 import { Sessions } from "./pages/Sessions"
+import Exercise from "./pages/Exercise"
 const App = () => {
 
     return (
@@ -21,13 +22,14 @@ const App = () => {
                 <Route path={"/login"} element={<Login />} />
                 <Route path={"/signup"} element={<SingUp />} />
                 <Route path={"/contatti"} element={<Contatti />} />
-                <Route path={"/esercizi"} element={<ExerciseDetail />} />
+                <Route path={"/esercizi"} element={<Exercise />} />
                 
                 {/* rotte protette */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/session/:id" element={<ProtectedRoute><SessionDetails /></ProtectedRoute>} />
                 <Route path="/exercise/:id" element={<ProtectedRoute><ExerciseDetail /></ProtectedRoute>} />
                 <Route path={"/sessions"} element={<ProtectedRoute><Sessions /></ProtectedRoute>} />
+                <Route path={"/esercizi"} element={<ProtectedRoute><Exercise /></ProtectedRoute>} />
                 <Route path="/NotFound" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/NotFound" replace />} />
             </Route>
