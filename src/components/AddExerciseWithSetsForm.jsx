@@ -11,8 +11,8 @@ import { Input, Select, Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 function AddExerciseWithSetsForm({ sessionId, onComplete }) {
-    // Otteniamo il token dal nostro contesto di autenticazione
-    const { token } = useAuth();
+    // Otteniamo la funzione fetchWithAuth dal nostro contesto di autenticazione
+    const { fetchWithAuth } = useAuth();
 
     // Gli stati del componente rimangono identici
     const [exerciseCatalog, setExerciseCatalog] = useState([]);
@@ -23,17 +23,17 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
 
     useEffect(() => {
         const fetchExercises = async () => {
-            if (!token) return; // Non fare nulla se non c'è il token
+            if (!fetchWithAuth) return; // Non fare nulla se non c'è la funzione
             try {
-                // Passiamo il token alla funzione API
-                const allExercises = await getAllExercises(token);
+                // Usiamo la funzione centralizzata che gestisce automaticamente i token
+                const allExercises = await getAllExercises();
                 setExerciseCatalog(allExercises);
             } catch (err) {
                 setError("Impossibile caricare gli esercizi.", err);
             }
         };
         fetchExercises();
-    }, [token]); // L'effetto dipende dal token
+    }, [fetchWithAuth]); // L'effetto dipende dalla funzione fetchWithAuth
 
     // Le funzioni handleSetChange, handleAddSet, handleRemoveSet rimangono identiche
 
@@ -64,8 +64,8 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
         setError('');
 
         try {
-            // **FASE 1: Passiamo il token alla chiamata API**
-            const exerciseResponse = await addExerciseToSession(token, sessionId, {
+            // **FASE 1: Usiamo le funzioni API centralizzate che gestiscono automaticamente i token**
+            const exerciseResponse = await addExerciseToSession(sessionId, {
                 esercizio_id: selectedExerciseId
             });
             const { workoutExerciseId } = exerciseResponse;
@@ -74,10 +74,10 @@ function AddExerciseWithSetsForm({ sessionId, onComplete }) {
                 throw new Error("La risposta del server non ha fornito un ID per l'esercizio nella sessione.");
             }
 
-            // **FASE 2: Passiamo il token a ogni chiamata per aggiungere i set**
+            // **FASE 2: Aggiungiamo i set usando le funzioni centralizzate**
             for (const set of sets) {
                 if (set.ripetizioni && set.peso) {
-                    await addSetToWorkoutExercise(token, sessionId, workoutExerciseId, set);
+                    await addSetToWorkoutExercise(sessionId, workoutExerciseId, set);
                 }
             }
 

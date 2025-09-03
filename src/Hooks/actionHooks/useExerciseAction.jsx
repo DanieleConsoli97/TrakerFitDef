@@ -1,26 +1,28 @@
 import { useState, useEffect } from 'react';
 import useExercise from '../useExercise';
+import { useAuth } from '../../contexts/AuthProvider';
 
-const useSessionData = (token) => {
-
-    const { indexExercises ,addExerciseToSession,addSetToWorkoutExercise} = useExercise(token);
+const useSessionData = () => {
+    const { isAuthenticated } = useAuth();
+    const { indexExercises, addExerciseToSession, addSetToWorkoutExercise } = useExercise();
 
     const [exercisesIndex, setExercises] = useState();
     useEffect(() => {
         const fetchExercises = async () => {
             try {
-                const esercises= await indexExercises(token);
-                console.log(esercises)
-                setExercises(esercises);
+                // Non passiamo più il token, la funzione usa il sistema centralizzato
+                const exercises = await indexExercises();
+                console.log(exercises);
+                setExercises(exercises);
             } catch (err) {
                 console.error(err);
             }
         };
 
-        if (token) {
+        if (isAuthenticated) {
             fetchExercises();
         }
-    }, [token]);
+    }, [isAuthenticated, indexExercises]);
 
     return { exercisesIndex,addExerciseToSession,addSetToWorkoutExercise}
 };

@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import useSessions from '../useSessions';
 import { useGlobalContext } from '../../contexts/GlobalContext';
+import { useAuth } from '../../contexts/AuthProvider';
 
-const useSessionData = (token) => {
-
-    const { indexSessions } = useSessions(token);
+const useSessionData = () => {
+    const { fetchWithAuth } = useAuth();
     const {pageSession}=useGlobalContext()
     const [sessionsIndex, setSessions] = useState();
     
@@ -15,21 +14,19 @@ const useSessionData = (token) => {
                     return
                 }  
                 }
-                const sessions = await indexSessions(pageSession,10);
+                // Usa il fetchWithAuth centralizzato per ottenere le sessioni
+                const sessions = await fetchWithAuth(`/sessions?page=${pageSession}&limit=10`);
                 setSessions(sessions);
             } catch (err) {
                 console.error(err);
             }
         };
     
-        useEffect(() => {
-        fetchSessions()
-
-        if (token) {
+    useEffect(() => {
+        if (fetchWithAuth) {
             fetchSessions();
         }
-
-    }, [token,pageSession]);
+    }, [fetchWithAuth, pageSession]);
 
     return { sessionsIndex,fetchSessions }
 };

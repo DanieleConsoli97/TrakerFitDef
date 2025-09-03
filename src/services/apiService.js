@@ -5,6 +5,19 @@
 // URL base dell'API da variabile d'ambiente con fallback
 const API_URL = import.meta.env.VITE_SERVER_URL_DEV || 'http://localhost:3000/api';
 
+// Funzione di callback per navigazione (sarà impostata da useAuthActions)
+let navigationCallback = null;
+let tokenUpdateCallback = null;
+
+// Funzioni per impostare i callback (chiamate da useAuthActions)
+export const setNavigationCallback = (callback) => {
+    navigationCallback = callback;
+};
+
+export const setTokenUpdateCallback = (callback) => {
+    tokenUpdateCallback = callback;
+};
+
 /**
  * Funzione interceptor HTTP che wrappa fetch nativo con autenticazione
  * Gestisce automaticamente il refresh del JWT quando l'access token scade (errore 401)
@@ -13,8 +26,15 @@ const API_URL = import.meta.env.VITE_SERVER_URL_DEV || 'http://localhost:3000/ap
  * @returns {Promise} - Promise che risolve con la risposta JSON parsata
  */
 async function fetchWithAuth(endpoint, options = {}) {
-    // Recupera l'access token dal localStorage
-    const token = localStorage.getItem('accessToken');
+    // Recupera l'access token dal localStorage (useLocalStorage gestisce già il parsing)
+    const storedToken = localStorage.getItem('accessToken');
+    let token = null;
+    try {
+        token = storedToken ? JSON.parse(storedToken) : null;
+    } catch (error) {
+        // Se il parsing fallisce, assumiamo che sia già una stringa
+        token = storedToken;
+    }
 
     // Prepara gli header con Content-Type e unisce eventuali header forniti
     const headers = {
@@ -27,8 +47,11 @@ async function fetchWithAuth(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // Costruisce l'URL completo
+    const fullUrl = `${API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    
     // Esegue la richiesta API iniziale
-    let response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+    let response = await fetch(fullUrl, { ...options, headers });
 
     // Gestisce la scadenza del token (401 Unauthorized)
     if (response.status === 401) {
@@ -37,9 +60,14 @@ async function fetchWithAuth(endpoint, options = {}) {
             // Recupera il refresh token dal localStorage
             const storedRefreshToken = localStorage.getItem('refreshToken');
             if (!storedRefreshToken) throw new Error('Refresh token non disponibile.');
-
-            // Fa il parsing del refresh token per rimuovere le virgolette extra
-            const refreshToken = JSON.parse(storedRefreshToken);
+            
+            let refreshToken;
+            try {
+                refreshToken = JSON.parse(storedRefreshToken);
+            } catch (error) {
+                // Se il parsing fallisce, assumiamo che sia già una stringa
+                refreshToken = storedRefreshToken;
+            }
 
             // Richiede un nuovo access token usando il refresh token
             const refreshResponse = await fetch(`${API_URL}/auth/refresh-token`, {
@@ -49,28 +77,38 @@ async function fetchWithAuth(endpoint, options = {}) {
             });
 
             const refreshData = await refreshResponse.json();
-            if (!refreshResponse.ok) throw new Error('Refresh token non valido.');
+            if (!refreshResponse.ok) throw new Error(refreshData.message || 'Refresh token non valido.');
 
-            // Aggiorna il localStorage con il nuovo access token
-            localStorage.setItem('accessToken', refreshData.accessToken);
+            // Aggiorna il localStorage con il nuovo access token tramite callback
+            if (tokenUpdateCallback) {
+                tokenUpdateCallback(refreshData.accessToken);
+            } else {
+                localStorage.setItem('accessToken', JSON.stringify(refreshData.accessToken));
+            }
+            
             headers['Authorization'] = `Bearer ${refreshData.accessToken}`;
 
             // Riprova la richiesta originale con il nuovo token
             console.log("Ritento la richiesta originale...");
-            response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+            response = await fetch(fullUrl, { ...options, headers });
         } catch (error) {
-            // Refresh fallito - forza logout e redirect al login
+            // Refresh fallito - forza logout
             console.error("Refresh fallito, logout forzato:", error);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            window.location.href = '/login';
+            
+            if (navigationCallback) {
+                navigationCallback('/login');
+            } else {
+                window.location.href = '/login';
+            }
             return Promise.reject(error);
         }
     }
 
     // Gestisce le risposte non-2xx
     if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `Errore HTTP: ${response.status}`);
     }
 
@@ -86,19 +124,22 @@ async function fetchWithAuth(endpoint, options = {}) {
 
 // --- Autenticazione ---
 // Nota: login e register usano fetch diretto perché non necessitano di token
-export const login = (credentials) =>
-    fetch(`${API_URL}/auth/login`, {
+export const login = (credentials) => {
+    console.log('🔐 [API] Login request to:', `${API_URL}/auth/login`);
+    console.log('📝 [API] Credentials:', { email: credentials.email });
+    return fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
-    }).then(res => res.json());
+    });
+};
 
 export const register = (userData) =>
     fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
-    }).then(res => res.json());
+    });
 
 export const logout = (refreshToken) =>
     fetch(`${API_URL}/auth/logout`, {
