@@ -26,7 +26,7 @@ const ExerciseList = ({ exercises }) => {
 
 
   return (
-    <div className="h-[calc(100vh-282px)] overflow-y-auto scrollbar-hide">
+    <div className="h-[calc(100vh-282px)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       <div className="space-y-4">
         {exercises.map((exercise) => (
           <Card key={exercise.id} className="border border-content2 shadow-sm hover:shadow-md transition-shadow">
