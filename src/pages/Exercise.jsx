@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthProvider";
 import ExerciseList from "../components/ExerciseList";
 
 const Exercise = () => {
-    const { exercisesIndex } = useAuth();
+    const { exercisesIndex, isLoadingExercises, errorExercises } = useAuth();
 
     return (
         <div className="flex flex-col bg-violet-900 rounded-lg p-3 sm:p-4">
@@ -11,16 +11,15 @@ const Exercise = () => {
                 ExerciseList
             </h2>
             <div className="max-h-[300px] overflow-y-auto">
-                {exercisesIndex === undefined && (
+                {isLoadingExercises && (
                     <p className="text-center text-violet-200">Caricamento...</p>
                 )}
-                {exercisesIndex === null && (
+                {errorExercises && (
                     <p className="text-center text-red-300">Errore nel caricamento degli esercizi</p>
                 )}
-                {exercisesIndex && (
-                    <ExerciseList exercises={exercisesIndex?.exercises} />
+                {exercisesIndex && exercisesIndex.exercises && (
+                    <ExerciseList exercises={exercisesIndex.exercises} />
                 )}
-               
             </div>
             {/* qui andrà il componente per aggiungere un esercizio alla lista */}
         </div>

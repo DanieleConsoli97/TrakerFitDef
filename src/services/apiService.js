@@ -158,7 +158,7 @@ export const getAllExercises = (options = {}) => {
         params.append('page', options.page || 1);
         params.append('limit', options.limit || 100);
     }
-    return fetchWithAuth(`/exercises?${params.toString()}`);
+    return fetchWithAuth(`/api/exercises?${params.toString()}`);
 };
 
 // Aggiunge un esercizio a una sessione

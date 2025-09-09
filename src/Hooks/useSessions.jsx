@@ -34,6 +34,21 @@ const useSessions = (fetchWithAuth) => {
         });
     }, [fetchWithAuth]);
 
+    const addExerciseToSession = useCallback(async (sessionId, exerciseData) => {
+        if (!fetchWithAuth) return;
+        return fetchWithAuth(`/sessions/${sessionId}/exercises`, {
+            method: 'POST',
+            body: JSON.stringify(exerciseData),
+        });
+    }, [fetchWithAuth]);
+
+    const addSetToWorkoutExercise = useCallback(async (sessionId, workoutExerciseId, setData) => {
+        if (!fetchWithAuth) return;
+        return fetchWithAuth(`/sessions/${sessionId}/exercises/${workoutExerciseId}/sets`, {
+            method: 'POST',
+            body: JSON.stringify(setData),
+        });
+    }, [fetchWithAuth]);
 
     return { 
         sessionsIndex: sessionsData, // Manteniamo il nome che usi
@@ -41,7 +56,9 @@ const useSessions = (fetchWithAuth) => {
         errorSessions: error,
         fetchSessions,
         detailsSessions,
-        addNewSession
+        addNewSession,
+        addExerciseToSession,
+        addSetToWorkoutExercise
     };
 };
 
