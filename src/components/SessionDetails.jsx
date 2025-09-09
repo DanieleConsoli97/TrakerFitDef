@@ -1,25 +1,70 @@
-// Session.jsx
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthProvider";
 import { useEffect, useState } from "react";
-import { useRef } from "react";
-import { Accordion, AccordionItem, Button } from "@heroui/react";
-import ExerciseItem from "./ExerciseItem"; // Importa il componente ExerciseItem
-import { Calendar1, ChevronLeft } from "lucide-react";
-import { Input, Select, SelectItem } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { useNavigate } from "react-router-dom";
 
 const SessionDetails = () => {
   const { id } = useParams();
-  const { detailsSessions, sessionsIndex, exercisesIndex, addExerciseToSession, addSetToWorkoutExercise } = useAuth();
+  const navigate = useNavigate();
+  const { detailsSessions } = useAuth();
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const exercisesValue = useRef();
-  const navigate = useNavigate();
 
-  // Funzione per caricare i dettagli della sessione
+  // Mock data per dimostrazione - sostituire con dati reali del backend
+  const mockSessionData = {
+    sessionNumber: 1,
+    date: 'venerdì 19 gennaio 2024',
+    startTime: '18:30',
+    endTime: '19:45',
+    duration: '1h 15m',
+    totalVolume: '5250kg',
+    notes: 'Ottima sessione, energia alta',
+    exercises: [
+      {
+        id: 1,
+        name: 'Panca Piana',
+        series: 4,
+        reps: 8,
+        weight: '80kg',
+        volume: '2560kg',
+        recovery: '3m 0s',
+        notes: 'Form perfetta, aumentare peso la prossima volta'
+      },
+      {
+        id: 2, 
+        name: 'Squat',
+        series: 4,
+        reps: 10,
+        weight: '100kg',
+        volume: '4000kg',
+        recovery: '4m 0s',
+        notes: null
+      },
+      {
+        id: 3,
+        name: 'Rematore con Bilanciere', 
+        series: 3,
+        reps: 10,
+        weight: '70kg',
+        volume: '2100kg',
+        recovery: '2m 0s',
+        notes: null
+      },
+      {
+        id: 4,
+        name: 'Military Press',
+        series: 3,
+        reps: 8, 
+        weight: '50kg',
+        volume: '1200kg',
+        recovery: '2m 30s',
+        notes: null
+      }
+    ]
+  };
+
   const fetchSessionDetails = async () => {
     try {
       setLoading(true);
@@ -38,294 +83,200 @@ const SessionDetails = () => {
     if (id) {
       fetchSessionDetails();
     }
-  }, [id, detailsSessions]);
-
-  const handleAddExe = async () => {
-    try {
-      const exercisesId = exercisesValue.current.value;
-      console.log("id esercizio", exercisesId);
-
-      const data = {
-        "esercizio_id": parseInt(exercisesId),
-        "note": "Focus sulla fase negativa, 3 serie x 10 ripetizioni"
-      };
-
-      // Aggiungi l'esercizio alla sessione
-      await addExerciseToSession(id, data);
-      console.log("operazione riuscita");
-
-      // Ricarica i dettagli della sessione per aggiornare l'interfaccia
-      await fetchSessionDetails();
-    } catch (error) {
-      console.log(error);
-      setError("Errore durante l'aggiunta dell'esercizio");
-    }
-  };
+  }, [id]);
 
   if (loading) {
-    return <p>Caricamento dettagli sessione...</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <Icon icon="lucide:loader-2" className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Caricamento dettagli sessione...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
-
-  if (!session) {
-    return <p>Nessun dettaglio sessione trovato.</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center text-red-500">
+          <Icon icon="lucide:alert-circle" className="w-8 h-8 mx-auto mb-4" />
+          <p>{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-background p-4 space-y-6">
+      {/* Back Button */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          onPress={() => navigate("/sessions")}
+          startContent={<Icon icon="lucide:arrow-left" />}
+          className="text-default-600"
+        >
+          Torna alle sessioni
+        </Button>
+      </div>
 
+      {/* Page Title */}
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Dettagli Sessione</h1>
+      </div>
 
-      <div className="md:container mt-4 space-y-4 md:p-6 p-2  ">
+      {/* Session Header Card */}
+      <Card className="bg-content1 border border-default-200">
+        <CardBody className="p-6">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-6">
+                <h2 className="text-2xl font-semibold">Sessione #{mockSessionData.sessionNumber}</h2>
+                <Button 
+                  size="sm" 
+                  variant="flat" 
+                  startContent={<Icon icon="lucide:edit" />}
+                >
+                  Modifica
+                </Button>
+              </div>
 
-        <div className="md:p-6  ">
-          <button onClick={()=>navigate("/sessions")} className="flex items-center text-2xl font-bold mb-5"><ChevronLeft /> Torna alle sessioni</button>
-          <h1 className="text-2xl font-bold mb-4">{session.note}</h1>
-          <p className="flex items-center text-2xl ">
-            <strong className="flex items-center text-2xl font-bold mb-5"> <Calendar1 className="mr-2" />  {new Date(session.data_sessione).toLocaleDateString("it-IT")} </strong>
-
-          </p>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              {session.esercizi && session.esercizi.length > 0 ? (
-                <>
-                  <div className="text-2xl font-bold text-blue-600">{session.esercizi.length}</div>
-                  <div className="text-sm text-gray-600">Esercizi</div>
-                </>
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-blue-600">0</div>
-                  <div className="text-sm text-gray-600">Esercizi</div>
-                </>
-              )}
-
-            </div>
-
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              {session.esercizi && session.esercizi.length > 0 ? (
-                <>
-                  <div className="text-2xl font-bold text-green-600">
-                    {session.esercizi
-                      .map(esercizio =>
-                        (esercizio.sets || [])  // Fallback a array vuoto se sets non esiste
-                          .reduce((sum, set) => sum + (set.serie_num || 0), 0)
-                      )
-                      .reduce((total, serieEsercizio) => total + serieEsercizio, 0)
-                    }
-                  </div>
-
-                  <div className="text-sm text-gray-600">Serie Totali</div>
-                </>
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-green-600">
-                    0
-                  </div>
-
-                  <div className="text-sm text-gray-600">Serie Totali</div>
-                </>
-              )}
-            </div>
-
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              {session.esercizi && session.esercizi.length > 0 ? (
-                <>
-                  <div className="text-2xl font-bold text-orange-600">
-                    {session.esercizi
-                      .map(esercizio =>
-                        (esercizio.sets || []).reduce((sum, set) => sum + (set.ripetizioni || 0), 0)
-                      )
-                      .reduce((total, ripetizioniEsercizio) => total + ripetizioniEsercizio, 0)
-                    }
-                  </div>
-
-                  <div className="text-sm text-gray-600">Ripetizioni Totali</div>
-                </>
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-orange-600">
-                    0
-                  </div>
-                  <div className="text-sm text-gray-600">Ripetizioni Totali</div>
-                </>
-              )}
-            </div>
-
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              {session.esercizi && session.esercizi.length > 0 ? (
-                <>
-                  <div className="text-2xl font-bold text-purple-600">
-                    {session.esercizi
-                      .map(esercizio =>
-                        (esercizio.sets || [])  // Fallback a array vuoto se sets non esiste
-                          .reduce((vol, set) => vol + (set.ripetizioni * set.serie_num * set.peso), 0)
-                      )
-                      .reduce((total, ripetizioniEsercizio) => total + ripetizioniEsercizio, 0)
-                    }<span className="text-sm"> kg</span>
-                  </div>
-
-                  <div className="text-sm text-gray-600">Volume allenamento</div>
-                </>
-              ) : (
-                <>
-                  <div className="text-2xl font-bold text-purple-600">
-                    0
-                  </div>
-                  <div className="text-sm text-gray-600">Volume allenamento</div>
-                </>
-              )}
-            </div>
-
-          </div>
-
-          <div className=" dark:bg-violet-900 light:bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border border-violet-700/30 dark:border-violet-700/30 light:border-gray-200">
-            <div className="space-y-6">
-              {/* Header con icona */}
-              <div className="flex items-center justify-center space-x-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-violet-400 dark:to-purple-500 light:from-blue-500 light:to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                  </svg>
+              {/* Date and Time Info */}
+              <div className="flex items-center gap-6 text-default-600 mb-4">
+                <div className="flex items-center gap-2">
+                  <Icon icon="lucide:calendar" className="w-4 h-4" />
+                  <span className="text-sm">{mockSessionData.date}</span>
                 </div>
-                <div className="text-center">
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-bold  dark:text-white light:text-gray-900">
-                    Aggiungi Esercizio
-                  </h2>
-                  <p className=" dark:text-violet-200 light:text-gray-600 text-sm sm:text-base hidden sm:block">
-                    Seleziona un esercizio per questa sessione
-                  </p>
+                <div className="flex items-center gap-2">
+                  <Icon icon="lucide:clock" className="w-4 h-4" />
+                  <span className="text-sm">{mockSessionData.startTime} - {mockSessionData.endTime}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon icon="lucide:zap" className="w-4 h-4" />
+                  <span className="text-sm">{mockSessionData.duration}</span>
                 </div>
               </div>
 
-              {/* Content Area */}
-              <div className="space-y-4 sm:space-y-6">
-                {/* Loading States */}
-                {(sessionsIndex === undefined || exercisesIndex === undefined) && (
-                  <div className="text-center py-6 sm:py-8">
-                    <div className="inline-flex items-center space-x-3  dark:text-violet-200 light:text-gray-600">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 sm:border-3 border-violet-300 dark:border-violet-300 light:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-sm sm:text-base font-medium">
-                        {sessionsIndex === undefined ? "Caricamento sessioni..." : "Caricamento esercizi..."}
-                      </span>
-                    </div>
+              {/* Colored Stats Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {mockSessionData.exercises.length}
                   </div>
-                )}
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Esercizi</div>
+                </div>
 
-                {/* Error States */}
-                {(sessionsIndex === null || exercisesIndex === null) && (
-                  <div className="text-center p-4 bg-red-500/10 dark:bg-red-500/10 light:bg-red-50 rounded-xl sm:rounded-2xl border border-red-400/30 dark:border-red-400/30 light:border-red-200 backdrop-blur-sm">
-                    <div className="flex items-center justify-center space-x-2">
-                      <svg className="w-5 h-5 text-red-400 dark:text-red-400 light:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p className="text-red-300 dark:text-red-300 light:text-red-600 text-sm sm:text-base font-medium">
-                        {sessionsIndex === null ? "Errore nel caricamento delle sessioni" : "Errore nel caricamento degli esercizi"}
-                      </p>
-                    </div>
+                <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {mockSessionData.exercises.reduce((total, ex) => total + ex.series, 0)}
                   </div>
-                )}
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Serie Totali</div>
+                </div>
 
-                {/* Exercise Selection */}
-                {exercisesIndex && (
-                  <div className="space-y-4 sm:space-y-6">
-                    <div className="space-y-3">
-                      <label className="block text-sm font-semibold dark:text-violet-200 light:text-gray-700 uppercase tracking-wider text-center sm:text-left">
-                        Seleziona Esercizio
-                      </label>
-                      <Select
-                        className="w-full px-4 sm:px-5 py-3 sm:py-4 
-                         bg-white/10 dark:bg-white/10 light:bg-gray-50 
-                         backdrop-blur-sm border-2 
-                         border-violet-500/30 dark:border-violet-500/30 light:border-gray-300 
-                         rounded-xl sm:rounded-2xl 
-                          dark:text-white light:text-gray-900 
-                         font-medium focus:outline-none 
-                         focus:ring-4 focus:ring-violet-400/50 dark:focus:ring-violet-400/50 light:focus:ring-blue-400/50 
-                         focus:border-violet-400 dark:focus:border-violet-400 light:focus:border-blue-500 
-                         transition-all duration-200 cursor-pointer 
-                         hover:bg-white/15 dark:hover:bg-white/15 light:hover:bg-gray-100 
-                         shadow-lg text-sm sm:text-base"
-                        ref={exercisesValue}
-                        defaultValue=""
-                        label="Scegli un esercizio..."
-
-                      >
-                        <SelectItem value="" disabled className="bg-violet-800 dark:bg-violet-800 light:bg-gray-100 text-violet-300 dark:text-violet-300 light:text-gray-500">
-                          Scegli un esercizio...
-                        </SelectItem>
-                        {exercisesIndex?.exercises.map((e) => (
-                          <SelectItem key={e.id} value={e.id} className="bg-violet-800 dark:bg-violet-800 light:bg-white text-white dark:text-white light:text-gray-900 py-2">
-                            {e.nome}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                    </div>
-
-                    {/* Add Button */}
-                    <Button
-                      className="group relative overflow-hidden w-full 
-                       bg-gradient-to-r from-violet-500 to-purple-600 
-                       dark:from-violet-500 dark:to-purple-600 
-                       light:from-blue-500 light:to-indigo-600 
-                       text-white px-4 sm:px-6 py-3 sm:py-4 
-                       rounded-xl sm:rounded-2xl font-semibold 
-                       shadow-xl hover:shadow-2xl 
-                       transform hover:scale-95 transition-all duration-300 
-                       active:scale-85 border-0 text-sm sm:text-base lg:text-lg"
-                      onClick={handleAddExe}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r 
-                            from-violet-400 to-purple-500 
-                            dark:from-violet-400 dark:to-purple-500 
-                            light:from-blue-400 light:to-indigo-500 
-                            opacity-0 group-hover:opacity-100 
-                            transition-opacity duration-300"></div>
-                      <div className="relative flex items-center justify-center space-x-2 sm:space-x-3">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center group-hover:rotate-90 transition-transform duration-300">
-                          <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                          </svg>
-                        </div>
-                        <span>Aggiungi alla Sessione</span>
-                        <div className="w-2 h-2 bg-white bg-opacity-40 rounded-full group-hover:scale-150 transition-transform duration-300"></div>
-                      </div>
-                    </Button>
+                <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    {mockSessionData.exercises.reduce((total, ex) => total + (ex.series * ex.reps), 0)}
                   </div>
-                )}
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Ripetizioni Totali</div>
+                </div>
+
+                <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {mockSessionData.totalVolume}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Volume allenamento</div>
+                </div>
               </div>
+
+              {/* Session Notes */}
+              {mockSessionData.notes && (
+                <div className="bg-default-50 rounded-lg p-4">
+                  <div className="flex items-start gap-2">
+                    <Icon icon="lucide:sticky-note" className="w-5 h-5 text-default-500 mt-0.5" />
+                    <div>
+                      <div className="text-sm text-default-500 mb-1">Note della sessione</div>
+                      <div className="text-default-700">{mockSessionData.notes}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+        </CardBody>
+      </Card>
 
-          {session.esercizi && session.esercizi.length > 0 ? (
-            <div className="mt-4">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Esercizi</h2>
-              </div>
+      {/* Exercises Section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Esercizi ({mockSessionData.exercises.length})</h2>
+        
+        <div className="space-y-4">
+          {mockSessionData.exercises.map((exercise, index) => (
+            <Card key={exercise.id} className="bg-content1/50 border border-default-200">
+              <CardBody className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">{index + 1}. {exercise.name}</h3>
+                  </div>
+                  <div className="flex gap-3 text-sm">
+                    <Chip size="sm" color="primary" variant="flat">{exercise.series} serie</Chip>
+                    <Chip size="sm" color="secondary" variant="flat">{exercise.reps} rip</Chip>
+                    <Chip size="sm" color="success" variant="flat">{exercise.weight}</Chip>
+                  </div>
+                </div>
 
-              <div className="max-h-[600px]  overflow-y-auto">
-                <Accordion className="p-0 " variant="splitted">
-                  {session.esercizi.map((esercizio, index) => (
-                    <AccordionItem  key={esercizio.workoutExerciseId} aria-label={esercizio.nomeEsercizio?.trim() || `Esercizio ${index + 1}`} title={esercizio.nomeEsercizio || `Esercizio ${index + 1}`}>
-                      <ExerciseItem
-                        esercizio={esercizio}
-                        sessionId={id}
-                        fetchSessionDetails={fetchSessionDetails}
-                        addSetToWorkoutExercise={addSetToWorkoutExercise}
-                        setError={setError}
-                      />
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            </div>
-          ) : (
-            <p className="text-gray-600">Nessun esercizio registrato per questa sessione.</p>
-          )}
+                {/* Exercise Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Icon icon="lucide:layers" className="w-4 h-4 text-default-500" />
+                    <div>
+                      <div className="text-xs text-default-500">Serie</div>
+                      <div className="font-semibold">{exercise.series}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Icon icon="lucide:repeat" className="w-4 h-4 text-default-500" />
+                    <div>
+                      <div className="text-xs text-default-500">Ripetizioni</div>
+                      <div className="font-semibold">{exercise.reps}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Icon icon="lucide:weight" className="w-4 h-4 text-default-500" />
+                    <div>
+                      <div className="text-xs text-default-500">Peso</div>
+                      <div className="font-semibold">{exercise.weight}</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Icon icon="lucide:clock" className="w-4 h-4 text-default-500" />
+                    <div>
+                      <div className="text-xs text-default-500">Recupero</div>
+                      <div className="font-semibold">{exercise.recovery}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-sm text-default-600 mb-3">
+                  Volume: <span className="font-semibold">{exercise.volume}</span>
+                </div>
+
+                {/* Exercise Notes */}
+                {exercise.notes && (
+                  <div className="text-sm text-default-600">
+                    <strong>Note</strong>
+                    <div className="mt-1 italic">{exercise.notes}</div>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 export default SessionDetails;
