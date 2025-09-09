@@ -36,9 +36,9 @@ export const Sessions = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 space-y-6">
+    <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6 ">
       {/* Sezione 1 - Aggiungi Sessione */}
-      <Card className="bg-content1 border border-default-200">
+      <Card className="bg-content1 border border-default-200 flex-shrink-0">
         <CardBody className="p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
@@ -81,9 +81,9 @@ export const Sessions = () => {
       </Card>
 
       {/* Sezione 2 - Lista Workout */}
-      <Card className="bg-content1 border border-default-200 flex-1 overflow-hidden">
-        <CardBody className="p-0">
-          <div className="p-6 border-b border-default-200">
+      <Card className="bg-content1 border border-default-200 flex-1 overflow-hidden min-h-0">
+        <CardBody className="p-0 h-full flex flex-col">
+          <div className="p-6 border-b border-default-200 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
                 <Icon icon="lucide:calendar" className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -99,7 +99,7 @@ export const Sessions = () => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-6 min-h-0">
             {sessionsIndex === undefined && (
               <div className="flex flex-col items-center justify-center py-12">
                 <Icon icon="lucide:loader-2" className="w-8 h-8 animate-spin text-default-400 mb-4" />
@@ -119,7 +119,7 @@ export const Sessions = () => {
 
           {/* Paginazione */}
           {sessionsIndex && (
-            <div className="p-6 border-t border-default-200">
+            <div className="p-6 border-t border-default-200 flex-shrink-0">
               <div className="flex justify-center items-center gap-3">
                 <Button 
                   disabled={pageSession === 1} 
