@@ -8,7 +8,7 @@ import ExerciseDetail from "./components/ExerciseDetail"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
-import SessionsComponets from "./components/SessionsComponets"
+
 import SessionDetails from "./components/SessionDetails"
 import { Sessions } from "./pages/Sessions"
 import Exercise from "./pages/Exercise"

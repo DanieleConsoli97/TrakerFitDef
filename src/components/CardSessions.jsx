@@ -53,7 +53,7 @@ export default function CardSessions({ sessions }) {
         return (
           <Card 
             key={session.id} 
-            className="w-full bg-content1/50 border border-default-200 hover:shadow-lg transition-all duration-200"
+            className="w-full  bg-content1/50 border border-default-200 hover:shadow-lg transition-all duration-200"
           >
             <CardBody className="p-6">
               <div className="flex justify-between items-start">
@@ -86,16 +86,28 @@ export default function CardSessions({ sessions }) {
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-6 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-primary">{sessionStats.totalReps}</span>
-                      <span className="text-sm text-default-600">ripetizioni</span>
+                  {sessionStats.totalExercises > 0 ? (
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-primary">{sessionStats.totalExercises}</span>
+                        <span className="text-sm text-default-600">esercizi</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-primary">{sessionStats.totalSets}</span>
+                        <span className="text-sm text-default-600">serie</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-primary">{sessionStats.totalReps}</span>
+                        <span className="text-sm text-default-600">ripetizioni</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-primary">{sessionStats.totalVolume.toLocaleString()}kg</span>
-                      <span className="text-sm text-default-600">volume</span>
+                  ) : (
+                    <div className="mb-4">
+                      <div className="text-sm text-default-500 italic">
+                        Statistiche disponibili nel dettaglio sessione
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Exercise Tags */}
                   {sessionStats.exerciseNames.length > 0 && (
