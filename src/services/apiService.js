@@ -49,7 +49,7 @@ async function fetchWithAuth(endpoint, options = {}) {
 
     // Costruisce l'URL completo
     const fullUrl = `${API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
-    
+
     // Esegue la richiesta API iniziale
     let response = await fetch(fullUrl, { ...options, headers });
 
@@ -60,7 +60,7 @@ async function fetchWithAuth(endpoint, options = {}) {
             // Recupera il refresh token dal localStorage
             const storedRefreshToken = localStorage.getItem('refreshToken');
             if (!storedRefreshToken) throw new Error('Refresh token non disponibile.');
-            
+
             let refreshToken;
             try {
                 refreshToken = JSON.parse(storedRefreshToken);
@@ -85,7 +85,7 @@ async function fetchWithAuth(endpoint, options = {}) {
             } else {
                 localStorage.setItem('accessToken', JSON.stringify(refreshData.accessToken));
             }
-            
+
             headers['Authorization'] = `Bearer ${refreshData.accessToken}`;
 
             // Riprova la richiesta originale con il nuovo token
@@ -96,7 +96,7 @@ async function fetchWithAuth(endpoint, options = {}) {
             console.error("Refresh fallito, logout forzato:", error);
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            
+
             if (navigationCallback) {
                 navigationCallback('/login');
             } else {
@@ -125,9 +125,9 @@ async function fetchWithAuth(endpoint, options = {}) {
 // --- Autenticazione ---
 // Nota: login e register usano fetch diretto perché non necessitano di token
 export const login = (credentials) => {
-    console.log('🔐 [API] Login request to:', `${API_URL}/auth/login`);
+    console.log('🔐 [API] Login request to:', `${API_URL}/api/auth/login`);
     console.log('📝 [API] Credentials:', { email: credentials.email });
-    return fetch(`${API_URL}/auth/login`, {
+    return fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
@@ -135,14 +135,14 @@ export const login = (credentials) => {
 };
 
 export const register = (userData) =>
-    fetch(`${API_URL}/auth/register`, {
+    fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
     });
 
 export const logout = (refreshToken) =>
-    fetch(`${API_URL}/auth/logout`, {
+    fetch(`${API_URL}/api/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken })

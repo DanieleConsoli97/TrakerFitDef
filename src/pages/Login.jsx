@@ -5,7 +5,7 @@ import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
 import Logo from '../assets/AppControl2.png';
 import { useAuth } from "../contexts/AuthProvider";
 
-function App() {
+function Login() {
 
   const [password, setPassword] = useState("");
   const [submitted, setSubmitted] = useState(null);
@@ -13,6 +13,7 @@ function App() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
   const { loginAction } = useAuth();
+
   // Real-time password validation
   const getPasswordError = (value) => {
     if (value.length < 4) {
@@ -153,4 +154,4 @@ function App() {
   )
 }
 
-export default App
+export default Login
