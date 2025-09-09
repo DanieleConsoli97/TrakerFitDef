@@ -1,8 +1,7 @@
 
-import { Card, CardBody, ScrollShadow } from "@heroui/react";
+import { Card, CardBody, Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
-
 
 const ExerciseList = ({ exercises }) => {
   if (!exercises || exercises.length === 0) {
@@ -13,24 +12,59 @@ const ExerciseList = ({ exercises }) => {
     );
   }
 
+  const getGroupIcon = (group) => {
+    const icons = {
+      'Gambe': 'fluent-emoji:leg',
+      'Petto': 'fluent-emoji:flexed-biceps',
+      'Schiena': 'fluent-emoji:person-rowing-boat',
+      'Spalle': 'fluent-emoji:person-lifting-weights',
+      'Braccia': 'fluent-emoji:flexed-biceps',
+      'Core': 'fluent-emoji:person-doing-cartwheel'
+    };
+    return icons[group] || 'lucide:dumbbell';
+  };
+
+
   return (
-    <ScrollShadow className="h-[400px]">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="h-[calc(100vh-282px)] overflow-y-auto scrollbar-hide">
+      <div className="space-y-4">
         {exercises.map((exercise) => (
-          <Link key={exercise.id} to={`/exercise/${exercise.id}`}>
-            <Card className="border border-content2 shadow-sm">
-              <CardBody>
-                <h3 className="text-lg font-semibold mb-2">{exercise.nome}</h3>
-                <div className="flex items-center text-default-500">
-                  <Icon icon="lucide:dumbbell" className="mr-2" />
-                  <span>{exercise.gruppo_muscolare}</span>
+          <Card key={exercise.id} className="border border-content2 shadow-sm hover:shadow-md transition-shadow">
+            <CardBody className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex items-start gap-3 flex-1">
+                  <div className="text-2xl">
+                    <Icon icon={getGroupIcon(exercise.gruppo_muscolare)} />
+                  </div>
+                  
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-semibold">{exercise.nome}</h3>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-default-500">
+                        <span>{exercise.gruppo_muscolare}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </CardBody>
-            </Card>
-          </Link>
+                
+                <Button
+                  as={Link}
+                  to={`/exercise/${exercise.id}`}
+                  isIconOnly
+                  variant="light"
+                  size="sm"
+                >
+                  <Icon icon="lucide:eye" className="text-lg" />
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
         ))}
       </div>
-    </ScrollShadow>
+    </div>
   );
 }
 

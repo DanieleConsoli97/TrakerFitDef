@@ -37,7 +37,7 @@ export const Sessions = () => {
         <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4 text-white">
           Lista Workout 💪
         </h1>
-        <div className="max-h-[300px] overflow-y-auto">
+        <div className="max-h-[310px] overflow-y-auto">
           {sessionsIndex === undefined && (
             <p className="text-center text-violet-200">Caricamento...</p>
           )}
