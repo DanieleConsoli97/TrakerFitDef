@@ -3,7 +3,6 @@ import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 
 export default function CardSessions({ sessions }) {
-  // Mock data for demonstration - replace with real backend data when available
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('it-IT', { 
@@ -14,26 +13,42 @@ export default function CardSessions({ sessions }) {
     });
   };
 
-  const mockSessionData = (session, index) => ({
-    ...session,
-    sessionNumber: index + 1,
-    startTime: '18:30',
-    endTime: '19:45',
-    duration: '1h 15m',
-    exerciseCount: Math.floor(Math.random() * 5) + 3, // 3-7 exercises
-    totalVolume: Math.floor(Math.random() * 3000) + 2000, // 2000-5000kg
-    exercises: [
-      'Panca Piana',
-      'Squat', 
-      'Rematore con Bilanciere',
-      '+1 altri'
-    ].slice(0, Math.floor(Math.random() * 3) + 2)
-  });
+  // Calculate real session statistics from backend data
+  const calculateSessionStats = (sessionData) => {
+    if (!sessionData || !sessionData.esercizi) {
+      return {
+        totalExercises: 0,
+        totalSets: 0,
+        totalReps: 0,
+        totalVolume: 0,
+        exerciseNames: []
+      };
+    }
+
+    const totalExercises = sessionData.esercizi.length;
+    const totalSets = sessionData.esercizi.reduce((total, esercizio) => {
+      return total + (esercizio.sets?.length || 0);
+    }, 0);
+    const totalReps = sessionData.esercizi.reduce((total, esercizio) => {
+      return total + (esercizio.sets?.reduce((repsSum, set) => repsSum + (set.ripetizioni || 0), 0) || 0);
+    }, 0);
+    const totalVolume = sessionData.esercizi.reduce((total, esercizio) => {
+      return total + (esercizio.sets?.reduce((volSum, set) => volSum + ((set.ripetizioni || 0) * (set.peso || 0)), 0) || 0);
+    }, 0);
+
+    // Get first few exercise names for display
+    const exerciseNames = sessionData.esercizi.slice(0, 3).map(ex => ex.nomeEsercizio);
+    if (sessionData.esercizi.length > 3) {
+      exerciseNames.push(`+${sessionData.esercizi.length - 3} altri`);
+    }
+
+    return { totalExercises, totalSets, totalReps, totalVolume, exerciseNames };
+  };
 
   return (
     <div className="space-y-4">
       {sessions?.map((session, index) => {
-        const sessionData = mockSessionData(session, index);
+        const sessionStats = calculateSessionStats(session);
         
         return (
           <Card 
@@ -46,7 +61,7 @@ export default function CardSessions({ sessions }) {
                   {/* Header */}
                   <div className="flex items-center gap-2 mb-3">
                     <h2 className="text-xl font-semibold text-foreground">
-                      {session.note || `Sessione #${sessionData.sessionNumber}`}
+                      {session.note || `Sessione #${session.id}`}
                     </h2>
                   </div>
                   
@@ -56,44 +71,48 @@ export default function CardSessions({ sessions }) {
                       <Icon icon="lucide:calendar" className="w-4 h-4" />
                       <span className="text-sm">{formatDate(session.data_sessione)}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Icon icon="lucide:clock" className="w-4 h-4" />
-                      <span className="text-sm">{sessionData.startTime} - {sessionData.endTime}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Icon icon="lucide:zap" className="w-4 h-4" />
-                      <span className="text-sm">{sessionData.duration}</span>
-                    </div>
+                    {sessionStats.totalExercises > 0 && (
+                      <>
+                        <div className="flex items-center gap-2">
+                          <Icon icon="lucide:dumbbell" className="w-4 h-4" />
+                          <span className="text-sm">{sessionStats.totalExercises} esercizi</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Icon icon="lucide:layers" className="w-4 h-4" />
+                          <span className="text-sm">{sessionStats.totalSets} serie</span>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Stats */}
                   <div className="flex items-center gap-6 mb-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-primary">{sessionData.exerciseCount}</span>
-                      <span className="text-sm text-default-600">esercizi</span>
+                      <span className="text-2xl font-bold text-primary">{sessionStats.totalReps}</span>
+                      <span className="text-sm text-default-600">ripetizioni</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-primary">{sessionData.totalVolume}kg</span>
+                      <span className="text-2xl font-bold text-primary">{sessionStats.totalVolume.toLocaleString()}kg</span>
                       <span className="text-sm text-default-600">volume</span>
                     </div>
                   </div>
 
                   {/* Exercise Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {sessionData.exercises.map((exercise, idx) => (
-                      <Chip 
-                        key={idx}
-                        size="sm" 
-                        variant="flat" 
-                        color="default"
-                        className="text-xs"
-                      >
-                        {exercise}
-                      </Chip>
-                    ))}
-                  </div>
-
-                  {/* Notes - rimuoviamo dato che ora è nel titolo */}
+                  {sessionStats.exerciseNames.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {sessionStats.exerciseNames.map((exerciseName, idx) => (
+                        <Chip 
+                          key={idx}
+                          size="sm" 
+                          variant="flat" 
+                          color="default"
+                          className="text-xs"
+                        >
+                          {exerciseName}
+                        </Chip>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Navigation Arrow */}
