@@ -1,15 +1,17 @@
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useAuth } from "../contexts/AuthProvider";
 import SessionsComponets from "../components/SessionsComponets";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import dayjs from "dayjs";
 
 export const Sessions = () => {
   const { sessionsIndex, addNewSession, fetchSessions } = useAuth();
   const { pageSession, setPageSession } = useGlobalContext();
   const noteSessione = useRef();
+  const [isAddingSession, setIsAddingSession] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Effetto per ricaricare i dati quando cambia la pagina
   useEffect(() => {
@@ -19,6 +21,7 @@ export const Sessions = () => {
 
   const handleAddSession = async () => {
     try {
+      setIsAddingSession(true);
       const note = noteSessione.current.value;
       const formattedDate = dayjs().format("YYYY-MM-DD");
       const data = {
@@ -29,51 +32,67 @@ export const Sessions = () => {
       noteSessione.current.value = "";
       setPageSession((p) => p);
       console.log("Sessione aggiunta:", data);
-      fetchSessions(pageSession);
+      await fetchSessions(pageSession);
+      
+      // Mostra messaggio di successo
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
     } catch (error) {
       console.error("Errore in handleAddSession", error);
+    } finally {
+      setIsAddingSession(false);
     }
   };
 
   return (
     <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6 ">
+      {/* Messaggio di successo */}
+      {showSuccessMessage && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">
+          <Icon icon="lucide:check-circle" className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <span className="text-green-700 dark:text-green-400 font-medium">
+            ✨ Sessione aggiunta con successo!
+          </span>
+        </div>
+      )}
+
       {/* Sezione 1 - Aggiungi Sessione */}
       <Card className="bg-content1 border border-default-200 flex-shrink-0">
-        <CardBody className="p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
-              <Icon icon="lucide:plus-circle" className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
+              <Icon icon="lucide:plus-circle" className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold">
-                Nuova Sessione
-              </h2>
-              <p className="text-default-600 text-sm">
-                Inizia il tuo allenamento di oggi
-              </p>
+              <h3 className="text-lg font-semibold text-default-800">Nuova Sessione</h3>
+              <p className="text-xs text-default-500 mt-0.5">Inizia il tuo allenamento di oggi</p>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <div className="md:col-span-3">
-              <label className="block text-default-700 text-sm font-medium mb-2">
-                Note della sessione
-              </label>
+        </CardHeader>
+        <CardBody className="pt-0 p-4">
+          <div className="flex items-stretch gap-3 justify-between">
+            {/* Parte sinistra: Textarea */}
+            <div className="flex-1">
               <textarea
                 ref={noteSessione}
-                className="w-full p-3 rounded-lg bg-default-50 border border-default-200 text-default-700 placeholder-default-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                placeholder="Descrivi il tuo allenamento di oggi..."
-                rows="2"
+                className="w-full h-12 p-3 rounded-lg bg-default-50 border border-default-200 text-default-700 placeholder-default-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder={isAddingSession ? "Aggiungendo sessione..." : "Aggiungi note per la nuova sessione..."}
+                rows="1"
+                disabled={isAddingSession}
               />
             </div>
-            <div className="md:col-span-1">
+            
+            {/* Parte destra: Bottone */}
+            <div className="flex-shrink-0">
               <Button 
                 color="primary"
-                className="w-full font-semibold" 
+                className="font-semibold px-6 h-12" 
                 onClick={handleAddSession}
-                startContent={<Icon icon="lucide:dumbbell" className="w-4 h-4" />}
+                isLoading={isAddingSession}
+                isDisabled={isAddingSession}
+                startContent={!isAddingSession && <Icon icon="lucide:plus" className="w-4 h-4" />}
               >
-                Inizia Workout
+                {isAddingSession ? "Aggiungendo..." : "Aggiungi Sessione"}
               </Button>
             </div>
           </div>
