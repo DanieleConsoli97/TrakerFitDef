@@ -125,9 +125,9 @@ async function fetchWithAuth(endpoint, options = {}) {
 // --- Autenticazione ---
 // Nota: login e register usano fetch diretto perché non necessitano di token
 export const login = (credentials) => {
-    console.log('🔐 [API] Login request to:', `${API_URL}/api/auth/login`);
+    console.log('🔐 [API] Login request to:', `${API_URL}/auth/login`);
     console.log('📝 [API] Credentials:', { email: credentials.email });
-    return fetch(`${API_URL}/api/auth/login`, {
+    return fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
@@ -135,14 +135,14 @@ export const login = (credentials) => {
 };
 
 export const register = (userData) =>
-    fetch(`${API_URL}/api/auth/register`, {
+    fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
     });
 
 export const logout = (refreshToken) =>
-    fetch(`${API_URL}/api/auth/logout`, {
+    fetch(`${API_URL}/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken })
@@ -158,7 +158,7 @@ export const getAllExercises = (options = {}) => {
         params.append('page', options.page || 1);
         params.append('limit', options.limit || 100);
     }
-    return fetchWithAuth(`/api/exercises?${params.toString()}`);
+    return fetchWithAuth(`/exercises?${params.toString()}`);
 };
 
 // Aggiunge un esercizio a una sessione
