@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect } from 'react';
 import useAuthActions from '../Hooks/actionHooks/useAuthActions';
 import useSessions from '../Hooks/useSessions';
 import useExercises from '../Hooks/useExercises';
+import useMaxesAction from '../Hooks/actionHooks/useMaxesAction';
 
 const AuthContext = createContext(null);
 
@@ -12,6 +13,7 @@ export function AuthProvider({ children }) {
     // 2. Gli hooks per i dati ricevono la funzione fetchWithAuth dall'hook di auth
     const sessions = useSessions(auth.fetchWithAuth);
     const exercises = useExercises(auth.fetchWithAuth);
+    const maxes = useMaxesAction(auth.fetchWithAuth);
 
     // Effetto per caricare i dati iniziali una volta che l'utente è autenticato
     useEffect(() => {
@@ -30,6 +32,7 @@ export function AuthProvider({ children }) {
         ...auth, // token, refreshToken, loginAction, etc.
         ...sessions, // sessionsIndex, isLoadingSessions, fetchSessions, etc.
         ...exercises, // exercisesIndex, isLoadingExercises, fetchExercises, etc.
+        ...maxes, // maxesIndex, isLoading, fetchMaxes, etc.
         isAuthenticated: !!auth.token
     };
 

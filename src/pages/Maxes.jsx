@@ -1,14 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, Card, CardBody, CardHeader, Input, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import useMaxesAction from "../Hooks/actionHooks/useMaxesAction";
 import { getAllExercises } from '../services/apiService';
 import { useAuth } from '../contexts/AuthProvider';
 import dayjs from "dayjs";
 
 export const Maxes = () => {
-    const { maxesIndex, isLoading, message, addNewMax, updateMax, deleteMax, clearMessage } = useMaxesAction();
-    const { fetchWithAuth } = useAuth();
+    const { maxesIndex, isLoading, message, addNewMax, updateMax, deleteMax, clearMessage, fetchWithAuth } = useAuth();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
     

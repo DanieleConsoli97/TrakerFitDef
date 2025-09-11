@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthProvider';
 
-const useMaxesAction = () => {
-    const { fetchWithAuth } = useAuth();
+const useMaxesAction = (fetchWithAuth) => {
     const [maxesIndex, setMaxes] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
