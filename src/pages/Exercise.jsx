@@ -3,14 +3,31 @@ import { useAuth } from "../contexts/AuthProvider";
 import ExerciseList from "../components/ExerciseList";
 import SearchAndFilter from "../components/SearchAndFilter";
 import { useState, useMemo } from "react";
-import { Card, CardBody } from "@heroui/react";
+import { Card, CardBody, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { createExercise } from "../services/apiService";
 
 const Exercise = () => {
-    const { exercisesIndex, isLoadingExercises, errorExercises } = useAuth();
+    const { exercisesIndex, isLoadingExercises, errorExercises, fetchExercises } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState("nome");
     const [filterGroup, setFilterGroup] = useState("all");
+    
+    // Stati per il form di creazione esercizio
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isCreating, setIsCreating] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
+    const [formData, setFormData] = useState({
+        nome: '',
+        gruppo_muscolare: ''
+    });
+
+    // Gruppi muscolari disponibili (potresti recuperarli dall'API)
+    const muscleGroups = [
+        "Petto", "Schiena", "Spalle", "Bicipiti", "Tricipiti", 
+        "Quadricipiti", "Femorali", "Glutei", "Polpacci", 
+        "Addominali", "Avambracci", "Collo"
+    ];
 
     // Filter and sort exercises
     const filteredAndSortedExercises = useMemo(() => {
@@ -35,6 +52,56 @@ const Exercise = () => {
 
         return filtered;
     }, [exercisesIndex, searchTerm, filterGroup, sortBy]);
+
+    // Gestione del form
+    const handleInputChange = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleCreateExercise = async () => {
+        if (!formData.nome.trim() || !formData.gruppo_muscolare) {
+            setMessage({ text: 'Nome e gruppo muscolare sono obbligatori', type: 'error' });
+            return;
+        }
+
+        try {
+            setIsCreating(true);
+            await createExercise({
+                nome: formData.nome.trim(),
+                gruppo_muscolare: formData.gruppo_muscolare
+            });
+            
+            setMessage({ text: 'Esercizio creato con successo!', type: 'success' });
+            setFormData({ nome: '', gruppo_muscolare: '' });
+            
+            // Ricarica la lista degli esercizi
+            await fetchExercises();
+            
+            // Chiudi modal dopo un breve delay per mostrare il messaggio
+            setTimeout(() => {
+                onClose();
+                setMessage({ text: '', type: '' });
+            }, 1500);
+            
+        } catch (error) {
+            console.error('Errore creazione esercizio:', error);
+            setMessage({ 
+                text: error.message || 'Errore durante la creazione dell\'esercizio', 
+                type: 'error' 
+            });
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setFormData({ nome: '', gruppo_muscolare: '' });
+        setMessage({ text: '', type: '' });
+        onClose();
+    };
 
     return (
         <div className=" bg-background p-4 space-y-6">
@@ -66,6 +133,13 @@ const Exercise = () => {
                                     </p>
                                 </div>
                             </div>
+                            <Button 
+                                color="primary"
+                                onPress={onOpen}
+                                startContent={<Icon icon="lucide:plus" className="w-4 h-4" />}
+                            >
+                                Aggiungi Esercizio
+                            </Button>
                         </div>
                     </div>
 
@@ -103,6 +177,84 @@ const Exercise = () => {
                     {/* qui andrà il componente per aggiungere un esercizio alla lista */}
                 </CardBody>
             </Card>
+            
+            {/* Modal per aggiungere nuovo esercizio */}
+            <Modal isOpen={isOpen} onClose={handleCloseModal} size="md">
+                <ModalContent>
+                    <ModalHeader className="flex flex-col gap-1">
+                        <h3 className="text-lg font-semibold">Nuovo Esercizio</h3>
+                        <p className="text-sm text-default-500">Aggiungi un nuovo esercizio al database</p>
+                    </ModalHeader>
+                    <ModalBody>
+                        {/* Messaggio di stato */}
+                        {message.text && (
+                            <div className={`border rounded-lg p-3 flex items-center gap-2 ${
+                                message.type === 'success' 
+                                    ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                                    : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                            }`}>
+                                <Icon 
+                                    icon={message.type === 'success' ? 'lucide:check-circle' : 'lucide:alert-circle'} 
+                                    className={`w-4 h-4 ${
+                                        message.type === 'success' 
+                                            ? 'text-green-600 dark:text-green-400'
+                                            : 'text-red-600 dark:text-red-400'
+                                    }`} 
+                                />
+                                <span className={`text-sm font-medium ${
+                                    message.type === 'success' 
+                                        ? 'text-green-700 dark:text-green-400'
+                                        : 'text-red-700 dark:text-red-400'
+                                }`}>
+                                    {message.text}
+                                </span>
+                            </div>
+                        )}
+                        
+                        <div className="space-y-4">
+                            <Input
+                                label="Nome esercizio"
+                                placeholder="Es. Panca piana"
+                                value={formData.nome}
+                                onValueChange={(value) => handleInputChange('nome', value)}
+                                isDisabled={isCreating}
+                            />
+                            
+                            <Select
+                                label="Gruppo muscolare"
+                                placeholder="Seleziona gruppo muscolare"
+                                selectedKeys={formData.gruppo_muscolare ? [formData.gruppo_muscolare] : []}
+                                onSelectionChange={(keys) => handleInputChange('gruppo_muscolare', Array.from(keys)[0])}
+                                isDisabled={isCreating}
+                            >
+                                {muscleGroups.map((group) => (
+                                    <SelectItem key={group} value={group}>
+                                        {group}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button 
+                            color="danger" 
+                            variant="flat" 
+                            onPress={handleCloseModal}
+                            isDisabled={isCreating}
+                        >
+                            Annulla
+                        </Button>
+                        <Button 
+                            color="primary" 
+                            onPress={handleCreateExercise}
+                            isLoading={isCreating}
+                            isDisabled={!formData.nome.trim() || !formData.gruppo_muscolare || isCreating}
+                        >
+                            Crea Esercizio
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     )
 }
