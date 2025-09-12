@@ -187,6 +187,20 @@ export const addSetToWorkoutExercise = (sessionId, workoutExerciseId, setData) =
 // Recupera il profilo dell'utente autenticato
 export const getMyProfile = () => fetchWithAuth('/users/me');
 
+// Aggiorna il profilo utente
+export const updateMyProfile = (profileData) =>
+    fetchWithAuth('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify(profileData)
+    });
+
+// Cambia password utente
+export const changeMyPassword = (passwordData) =>
+    fetchWithAuth('/users/me/password', {
+        method: 'PUT',
+        body: JSON.stringify(passwordData)
+    });
+
 // --- Sessioni (protetto) ---
 // Recupera le sessioni dell'utente con paginazione
 export const getMySessions = (page = 1, limit = 10) =>

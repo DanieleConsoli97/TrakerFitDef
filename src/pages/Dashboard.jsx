@@ -111,7 +111,7 @@ const Dashboard = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="space-y-6 p-6 max-w-7xl xl:max-w-[100rem] mx-auto">
       {/* Header con saluto e statistiche principali */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex justify-between items-start mb-6">
@@ -275,6 +275,16 @@ const Dashboard = () => {
                   startContent={<Icon icon="lucide:search" className="w-4 h-4" />}
                 >
                   Cerca Esercizi
+                </Button>
+              </Link>
+              <Link to="/profile">
+                <Button 
+                  className="w-full justify-start" 
+                  color="default" 
+                  variant="flat"
+                  startContent={<Icon icon="lucide:user" className="w-4 h-4" />}
+                >
+                  Il Mio Profilo
                 </Button>
               </Link>
             </div>

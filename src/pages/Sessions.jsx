@@ -45,7 +45,7 @@ export const Sessions = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6 ">
+    <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6 max-w-7xl xl:max-w-[100rem] mx-auto">
       {/* Messaggio di successo */}
       {showSuccessMessage && (
         <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">

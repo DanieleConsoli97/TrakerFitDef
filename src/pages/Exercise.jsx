@@ -104,7 +104,7 @@ const Exercise = () => {
     };
 
     return (
-        <div className=" bg-background p-4 space-y-6">
+        <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
             {/* Page Title */}
             <div>
                 <h1 className="text-3xl font-bold mb-2">Database Esercizi</h1>
