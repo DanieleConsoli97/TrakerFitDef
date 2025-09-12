@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useAuth } from "../contexts/AuthProvider";
 import SessionsComponets from "../components/SessionsComponets";
@@ -13,7 +13,6 @@ export const Sessions = () => {
   const navigate = useNavigate();
   const noteSessione = useRef();
   const [isAddingSession, setIsAddingSession] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Effetto per ricaricare i dati quando cambia la pagina
   useEffect(() => {
@@ -35,12 +34,26 @@ export const Sessions = () => {
       setPageSession((p) => p);
       console.log("Sessione aggiunta:", data);
       await fetchSessions(pageSession);
-      
-      // Mostra messaggio di successo
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 3000);
+
+      // Mostra toast di successo
+      addToast({
+        type: "success",
+        title: "Successo",
+        message: "✨ Sessione aggiunta con successo!",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "success"
+      });
     } catch (error) {
       console.error("Errore in handleAddSession", error);
+      addToast({
+        type: "error",
+        title: "Errore",
+        message: "Errore durante l'aggiunta della sessione. Riprova.",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "danger"
+      });
     } finally {
       setIsAddingSession(false);
     }
@@ -60,15 +73,6 @@ export const Sessions = () => {
         </Button>
       </div>
 
-      {/* Messaggio di successo */}
-      {showSuccessMessage && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center gap-3">
-          <Icon icon="lucide:check-circle" className="w-5 h-5 text-green-600 dark:text-green-400" />
-          <span className="text-green-700 dark:text-green-400 font-medium">
-            ✨ Sessione aggiunta con successo!
-          </span>
-        </div>
-      )}
 
       {/* Sezione 1 - Aggiungi Sessione */}
       <Card className="bg-content1 border border-default-200 flex-shrink-0">
@@ -95,12 +99,12 @@ export const Sessions = () => {
                 disabled={isAddingSession}
               />
             </div>
-            
+
             {/* Parte destra: Bottone */}
             <div className="flex-shrink-0">
-              <Button 
+              <Button
                 color="primary"
-                className="font-semibold px-6 h-12" 
+                className="font-semibold px-6 h-12"
                 onClick={handleAddSession}
                 isLoading={isAddingSession}
                 isDisabled={isAddingSession}
@@ -154,8 +158,8 @@ export const Sessions = () => {
           {sessionsIndex && (
             <div className="p-6 border-t border-default-200 flex-shrink-0">
               <div className="flex justify-center items-center gap-3">
-                <Button 
-                  disabled={pageSession === 1} 
+                <Button
+                  disabled={pageSession === 1}
                   onClick={() => setPageSession(c => c - 1)}
                   variant="flat"
                   isIconOnly
@@ -165,8 +169,8 @@ export const Sessions = () => {
                 <span className="px-4 py-2 text-sm text-default-600">
                   Pagina {pageSession} di {sessionsIndex.totalPages}
                 </span>
-                <Button 
-                  disabled={pageSession >= sessionsIndex.totalPages} 
+                <Button
+                  disabled={pageSession >= sessionsIndex.totalPages}
                   onClick={() => setPageSession(c => c + 1)}
                   variant="flat"
                   isIconOnly
