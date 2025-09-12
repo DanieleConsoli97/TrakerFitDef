@@ -5,10 +5,12 @@ import SearchAndFilter from "../components/SearchAndFilter";
 import { useState, useMemo } from "react";
 import { Card, CardBody, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 import { createExercise } from "../services/apiService";
 
 const Exercise = () => {
     const { exercisesIndex, isLoadingExercises, errorExercises, fetchExercises } = useAuth();
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [sortBy, setSortBy] = useState("nome");
     const [filterGroup, setFilterGroup] = useState("all");
@@ -105,6 +107,18 @@ const Exercise = () => {
 
     return (
         <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
+            {/* Back to Dashboard Button */}
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    onPress={() => navigate("/dashboard")}
+                    startContent={<Icon icon="lucide:arrow-left" />}
+                    className="text-default-600"
+                >
+                    Torna alla Dashboard
+                </Button>
+            </div>
+
             {/* Page Title */}
             <div>
                 <h1 className="text-3xl font-bold mb-2">Database Esercizi</h1>

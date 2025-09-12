@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, Card, CardBody, CardHeader, Input, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import { useNavigate } from "react-router-dom";
 import { getAllExercises } from '../services/apiService';
 import { useAuth } from '../contexts/AuthProvider';
 import dayjs from "dayjs";
 
 export const Maxes = () => {
     const { maxesIndex, isLoading, message, addNewMax, updateMax, deleteMax, clearMessage, fetchWithAuth } = useAuth();
+    const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
     
@@ -110,7 +112,19 @@ export const Maxes = () => {
     };
 
     return (
-        <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6">
+        <div className="h-[calc(100vh-80px)] bg-background p-4 flex flex-col gap-6 max-w-7xl xl:max-w-[100rem] mx-auto">
+            {/* Back to Dashboard Button */}
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    onPress={() => navigate("/dashboard")}
+                    startContent={<Icon icon="lucide:arrow-left" />}
+                    className="text-default-600"
+                >
+                    Torna alla Dashboard
+                </Button>
+            </div>
+
             {/* Messaggio di successo/errore */}
             {message.text && (
                 <div className={`border rounded-lg p-4 flex items-center gap-3 ${
