@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound"
 import SessionDetails from "./components/SessionDetails"
 import { Sessions } from "./pages/Sessions"
 import Exercise from "./pages/Exercise"
+import { Maxes } from "./pages/Maxes"
+import { UserProfile } from "./pages/UserProfile"
 const App = () => {
 
     return (
@@ -29,6 +31,8 @@ const App = () => {
                 <Route path="/session/:id" element={<ProtectedRoute><SessionDetails /></ProtectedRoute>} />
                 <Route path="/exercise/:id" element={<ProtectedRoute><ExerciseDetail /></ProtectedRoute>} />
                 <Route path={"/sessions"} element={<ProtectedRoute><Sessions /></ProtectedRoute>} />
+                <Route path={"/maxes"} element={<ProtectedRoute><Maxes /></ProtectedRoute>} />
+                <Route path={"/profile"} element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                 <Route path={"/esercizi"} element={<ProtectedRoute><Exercise /></ProtectedRoute>} />
                 <Route path="/NotFound" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/NotFound" replace />} />

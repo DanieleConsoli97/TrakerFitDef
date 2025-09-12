@@ -41,31 +41,30 @@ export default function NavbarComp() {
     {
       label: "Navigazione",
       items: [
-        
+
         ...(isAuthenticated ? [{ name: "Dashboard", path: "/dashboard", icon: "📊" }] : []),
       ],
     },
     ...(isAuthenticated
       ? [
-          {
-            label: "Fitness",
-            items: [
-              { name: "I Miei Allenamenti", path: "/workouts", icon: "💪" },
-              { name: "Progressi", path: "/progress", icon: "📈" },
-              { name: "Statistiche", path: "/analytics", icon: "📉" },
-              { name: "Programmi", path: "/programs", icon: "📋" },
-            ],
-          },
-          {
-            label: "Account",
-            items: [
-              { name: "Profilo", path: "/profile", icon: "👤" },
-              { name: "Impostazioni", path: "/settings", icon: "⚙️" },
-              { name: "Notifiche", path: "/notifications", icon: "🔔" },
-              { name: "Logout", path: "#", icon: "🚪", isLogout: true, color: "danger" },
-            ],
-          },
-        ]
+        {
+          label: "Fitness",
+          items: [
+            { name: "Sessioni di allenamento", path: "/sessions", icon: "💪" },
+            { name: "Massimali", path: "/maxes", icon: "📈" },
+            { name: "Programmi", path: "/programs", icon: "📋" },
+          ],
+        },
+        {
+          label: "Account",
+          items: [
+            { name: "Profilo", path: "/profile", icon: "👤" },
+            { name: "Impostazioni", path: "/settings", icon: "⚙️" },
+            { name: "Notifiche", path: "/notifications", icon: "🔔" },
+            { name: "Logout", path: "#", icon: "🚪", isLogout: true, color: "danger" },
+          ],
+        },
+      ]
       : [])
   ];
 
@@ -131,13 +130,12 @@ export default function NavbarComp() {
                     <Link
                       key={item.name}
                       to={item.path}
-                      className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${
-                        isActivePath(item.path) 
-                          ? "text-primary font-semibold" 
-                          : item.color === "danger" 
-                            ? "text-danger" 
+                      className={`block px-3 py-2 rounded hover:bg-default-100 transition-colors text-sm ${isActivePath(item.path)
+                          ? "text-primary font-semibold"
+                          : item.color === "danger"
+                            ? "text-danger"
                             : ""
-                      }`}
+                        }`}
                       onClick={(e) => {
                         if (item.isLogout) {
                           e.preventDefault();
@@ -165,7 +163,7 @@ export default function NavbarComp() {
                 Login
               </Button>
             </NavbarItem >
-            <NavbarItem  className="hidden sm:flex">
+            <NavbarItem className="hidden sm:flex">
               <Button onClick={() => navigate("/signup")} color="warning" variant="flat">
                 Sign Up
               </Button>
@@ -202,8 +200,8 @@ export default function NavbarComp() {
                       item.color === "danger"
                         ? "rgb(var(--danger))"
                         : isActivePath(item.path)
-                        ? "rgb(var(--primary))"
-                        : "rgb(var(--foreground))",
+                          ? "rgb(var(--primary))"
+                          : "rgb(var(--foreground))",
                   }}
                 >
                   <span className="text-lg">{item.icon}</span>

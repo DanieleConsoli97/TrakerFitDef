@@ -94,9 +94,17 @@ const SessionDetails = () => {
   const sessionStats = calculateSessionStats(session);
 
   return (
-    <div className="min-h-screen bg-background p-4 space-y-6">
-      {/* Back Button */}
+    <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
+      {/* Back Buttons */}
       <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          onPress={() => navigate("/dashboard")}
+          startContent={<Icon icon="lucide:home" />}
+          className="text-default-600"
+        >
+          Torna alla Dashboard
+        </Button>
         <Button
           variant="ghost"
           onPress={() => navigate("/sessions")}

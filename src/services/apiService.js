@@ -161,6 +161,13 @@ export const getAllExercises = (options = {}) => {
     return fetchWithAuth(`/exercises?${params.toString()}`);
 };
 
+// Crea un nuovo esercizio (solo admin)
+export const createExercise = (exerciseData) =>
+    fetchWithAuth('/exercises', {
+        method: 'POST',
+        body: JSON.stringify(exerciseData)
+    });
+
 // Aggiunge un esercizio a una sessione
 export const addExerciseToSession = (sessionId, exerciseData) => {
     return fetchWithAuth(`/sessions/${sessionId}/exercises`, {
@@ -180,6 +187,20 @@ export const addSetToWorkoutExercise = (sessionId, workoutExerciseId, setData) =
 // Recupera il profilo dell'utente autenticato
 export const getMyProfile = () => fetchWithAuth('/users/me');
 
+// Aggiorna il profilo utente
+export const updateMyProfile = (profileData) =>
+    fetchWithAuth('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify(profileData)
+    });
+
+// Cambia password utente
+export const changeMyPassword = (passwordData) =>
+    fetchWithAuth('/users/me/password', {
+        method: 'PUT',
+        body: JSON.stringify(passwordData)
+    });
+
 // --- Sessioni (protetto) ---
 // Recupera le sessioni dell'utente con paginazione
 export const getMySessions = (page = 1, limit = 10) =>
@@ -187,5 +208,29 @@ export const getMySessions = (page = 1, limit = 10) =>
 
 // Esporta fetchWithAuth per uso nei custom hooks
 export { fetchWithAuth };
+
+// --- Massimali (protetto) ---
+// Recupera i massimali dell'utente
+export const getMyMaxes = () => fetchWithAuth('/maxes');
+
+// Crea un nuovo record massimale
+export const createMax = (maxData) =>
+    fetchWithAuth('/maxes', {
+        method: 'POST',
+        body: JSON.stringify(maxData)
+    });
+
+// Aggiorna un massimale esistente
+export const updateMax = (id, maxData) =>
+    fetchWithAuth(`/maxes/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(maxData)
+    });
+
+// Elimina un massimale
+export const deleteMax = (id) =>
+    fetchWithAuth(`/maxes/${id}`, {
+        method: 'DELETE'
+    });
 
 // TODO: Aggiungi qui altre funzioni API necessarie per l'applicazione

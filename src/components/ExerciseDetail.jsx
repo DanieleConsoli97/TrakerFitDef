@@ -24,7 +24,7 @@ const ExerciseDetail = () => {
     // Stati di caricamento
     if (!exercisesIndex) {
         return (
-            <div className="min-h-screen bg-background p-4 space-y-6">
+            <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
                 <div className="flex flex-col items-center justify-center py-12">
                     <Icon icon="lucide:loader-2" className="w-8 h-8 animate-spin text-default-400 mb-4" />
                     <p className="text-default-500">Caricamento esercizio...</p>
@@ -39,8 +39,16 @@ const ExerciseDetail = () => {
     // Esercizio non trovato
     if (!exercise) {
         return (
-            <div className="min-h-screen bg-background p-4 space-y-6">
+            <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
                 <div className="flex items-center gap-2 mb-6">
+                    <Button
+                        variant="ghost"
+                        onPress={() => navigate("/dashboard")}
+                        startContent={<Icon icon="lucide:home" />}
+                        className="text-default-600"
+                    >
+                        Torna alla Dashboard
+                    </Button>
                     <Button
                         variant="ghost"
                         onPress={() => navigate("/esercizi")}
@@ -60,9 +68,17 @@ const ExerciseDetail = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background p-4 space-y-6">
-            {/* Back Button */}
+        <div className="bg-background p-4 space-y-6 max-w-7xl xl:max-w-[100rem] mx-auto">
+            {/* Back Buttons */}
             <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    onPress={() => navigate("/dashboard")}
+                    startContent={<Icon icon="lucide:home" />}
+                    className="text-default-600"
+                >
+                    Torna alla Dashboard
+                </Button>
                 <Button
                     variant="ghost"
                     onPress={() => navigate("/esercizi")}
@@ -79,7 +95,7 @@ const ExerciseDetail = () => {
             </div>
 
             {/* Exercise Header Card */}
-            <Card className="bg-content1 border border-default-200">
+            <Card className="bg-content1 border border-default-200 ">
                 <CardBody className="p-6">
                     <div className="flex justify-between items-start">
                         <div className="flex-1">
