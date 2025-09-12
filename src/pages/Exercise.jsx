@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthProvider";
 import ExerciseList from "../components/ExerciseList";
 import SearchAndFilter from "../components/SearchAndFilter";
 import { useState, useMemo } from "react";
-import { Card, CardBody, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, Select, SelectItem } from "@heroui/react";
+import { Card, CardBody, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Input, Select, SelectItem, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import { createExercise } from "../services/apiService";
@@ -66,6 +66,14 @@ const Exercise = () => {
     const handleCreateExercise = async () => {
         if (!formData.nome.trim() || !formData.gruppo_muscolare) {
             setMessage({ text: 'Nome e gruppo muscolare sono obbligatori', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "Nome e gruppo muscolare sono obbligatori",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
@@ -77,6 +85,14 @@ const Exercise = () => {
             });
             
             setMessage({ text: 'Esercizio creato con successo!', type: 'success' });
+            addToast({
+                type: "success",
+                title: "Esercizio Creato",
+                message: "✨ Esercizio creato con successo!",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "success"
+            });
             setFormData({ nome: '', gruppo_muscolare: '' });
             
             // Ricarica la lista degli esercizi
@@ -93,6 +109,14 @@ const Exercise = () => {
             setMessage({ 
                 text: error.message || 'Errore durante la creazione dell\'esercizio', 
                 type: 'error' 
+            });
+            addToast({
+                type: "error",
+                title: "Errore",
+                message: error.message || 'Errore durante la creazione dell\'esercizio',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
             });
         } finally {
             setIsCreating(false);

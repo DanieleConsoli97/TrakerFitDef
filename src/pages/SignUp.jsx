@@ -1,5 +1,5 @@
 
-import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody } from "@heroui/react";
+import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody, addToast } from "@heroui/react";
 
 
 import { useState } from "react";
@@ -30,7 +30,7 @@ const SingUp = () => {
     return null;
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
@@ -51,16 +51,42 @@ const SingUp = () => {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-
+      addToast({
+        type: "error",
+        title: "Errore di Validazione",
+        message: "Controlla i dati inseriti e riprova.",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "danger"
+      });
       return;
     }
 
-    // Clear errors and submit
-    setErrors({});
-    console.log(data)
-    setSubmitted(data);
-    registerAction(data)
-
+    try {
+      // Clear errors and submit
+      setErrors({});
+      console.log(data)
+      setSubmitted(data);
+      await registerAction(data);
+      
+      addToast({
+        type: "success",
+        title: "Registrazione Completata",
+        message: "🎉 Account creato con successo!",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "success"
+      });
+    } catch (error) {
+      addToast({
+        type: "error",
+        title: "Errore di Registrazione",
+        message: "Errore durante la creazione dell'account. Riprova.",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "danger"
+      });
+    }
   };
 
   return (
