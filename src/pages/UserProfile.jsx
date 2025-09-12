@@ -219,12 +219,12 @@ export const UserProfile = () => {
                                 className="w-16 h-16 text-large bg-white text-primary font-bold"
                             />
                             <div className="flex-1">
-                                <h1 className="text-2xl font-bold">
+                                <h1 className="text-2xl font-bold ps-1">
                                     {userProfile?.nome} {userProfile?.cognome}
                                 </h1>
-                                <p className="text-blue-100 text-sm">{userProfile?.email}</p>
+                                <p className="text-blue-100 text-sm ps-1">{userProfile?.email}</p>
                                 <div className="flex items-center gap-4 mt-2">
-                                    <Chip size="sm" variant="flat" className="bg-white/20 text-white">
+                                    <Chip size="sm" variant="flat" className="bg-white/20 text-white p-5">
                                         <Icon icon="lucide:calendar" className="w-3 h-3 mr-1" />
                                         Membro dal {dayjs(userProfile?.data_registrazione).format('MM/YYYY')}
                                     </Chip>
