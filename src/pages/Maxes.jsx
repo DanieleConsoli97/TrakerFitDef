@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button, Card, CardBody, CardHeader, Input, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Input, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, addToast } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import { getAllExercises } from '../services/apiService';
@@ -36,6 +36,14 @@ export const Maxes = () => {
             } catch (err) {
                 console.error("Impossibile caricare gli esercizi.", err);
                 setExerciseCatalog([]); // Fallback a array vuoto
+                addToast({
+                    type: "error",
+                    title: "Errore",
+                    message: "Impossibile caricare gli esercizi",
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true,
+                    color: "danger"
+                });
             }
         };
         fetchExercises();
@@ -51,6 +59,14 @@ export const Maxes = () => {
 
     const handleAddMax = async () => {
         if (!selectedExerciseId || !peso || !dataRegistrata) {
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "Tutti i campi sono obbligatori",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
@@ -62,6 +78,15 @@ export const Maxes = () => {
                 data_registrata: dataRegistrata
             });
             
+            addToast({
+                type: "success",
+                title: "Massimale Aggiunto",
+                message: "🏆 Nuovo massimale registrato con successo!",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "success"
+            });
+            
             // Reset form
             setSelectedExerciseId('');
             setPeso('');
@@ -69,6 +94,14 @@ export const Maxes = () => {
             onClose();
         } catch (error) {
             console.error("Errore nell'aggiunta del massimale:", error);
+            addToast({
+                type: "error",
+                title: "Errore",
+                message: "Errore nell'aggiunta del massimale. Riprova.",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -83,6 +116,14 @@ export const Maxes = () => {
 
     const handleUpdateMax = async () => {
         if (!editingMax || !editPeso || !editData) {
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "Tutti i campi sono obbligatori",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
@@ -93,9 +134,26 @@ export const Maxes = () => {
                 data_registrata: editData
             });
             
+            addToast({
+                type: "success",
+                title: "Massimale Aggiornato",
+                message: "✨ Massimale aggiornato con successo!",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "success"
+            });
+            
             onEditClose();
         } catch (error) {
             console.error("Errore nell'aggiornamento del massimale:", error);
+            addToast({
+                type: "error",
+                title: "Errore",
+                message: "Errore nell'aggiornamento del massimale. Riprova.",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -105,8 +163,24 @@ export const Maxes = () => {
         if (window.confirm('Sei sicuro di voler eliminare questo massimale?')) {
             try {
                 await deleteMax(id);
+                addToast({
+                    type: "success",
+                    title: "Massimale Eliminato",
+                    message: "🗑️ Massimale eliminato con successo!",
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true,
+                    color: "success"
+                });
             } catch (error) {
                 console.error("Errore nell'eliminazione del massimale:", error);
+                addToast({
+                    type: "error",
+                    title: "Errore",
+                    message: "Errore nell'eliminazione del massimale. Riprova.",
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true,
+                    color: "danger"
+                });
             }
         }
     };
@@ -124,32 +198,6 @@ export const Maxes = () => {
                     Torna alla Dashboard
                 </Button>
             </div>
-
-            {/* Messaggio di successo/errore */}
-            {message.text && (
-                <div className={`border rounded-lg p-4 flex items-center gap-3 ${
-                    message.type === 'success' 
-                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                        : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-                }`}>
-                    <Icon 
-                        icon={message.type === 'success' ? 'lucide:check-circle' : 'lucide:alert-circle'} 
-                        className={`w-5 h-5 ${
-                            message.type === 'success' 
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
-                        }`} 
-                    />
-                    <span className={`font-medium ${
-                        message.type === 'success' 
-                            ? 'text-green-700 dark:text-green-400'
-                            : 'text-red-700 dark:text-red-400'
-                    }`}>
-                        {message.text}
-                    </span>
-                </div>
-            )}
-
             {/* Sezione 1 - Aggiungi Massimale */}
             <Card className="bg-content1 border border-default-200 flex-shrink-0">
                 <CardHeader className="pb-3">

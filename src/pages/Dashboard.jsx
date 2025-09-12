@@ -1,6 +1,6 @@
 import { useAuth } from "../contexts/AuthProvider";
-import { useMemo } from "react";
-import { Button, Card, CardBody, CardHeader, CardFooter, Image, Progress, Chip } from "@heroui/react";
+import { useEffect, useMemo, useState } from "react";
+import { Button, Card, CardBody, CardHeader, CardFooter, Image, Progress, Chip, addToast } from "@heroui/react";
 import dayjs from 'dayjs';
 import { useGlobalContext } from "../contexts/GlobalContext";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -10,22 +10,56 @@ import imageMassimale from "../assets/ProgettoMassimale.png";
 import imageSessione from "../assets/ProgettoSessioni.png";
 import { Link } from "react-router-dom";
 
+import { getMyProfile } from '../services/apiService';
+
+
+
+
+
 const Dashboard = () => {
   const { sessionsIndex, exercisesIndex, maxesIndex, addSetToWorkoutExercise, addExerciseToSession, addNewSession, fetchSessions } = useAuth();
-  const { pageSession, setPageSession } = useGlobalContext();
+  const [userProfile, setUserProfile] = useState(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [message, setMessage] = useState({ text: '', type: '' });
+  
+  // Carica profilo utente
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        setIsLoadingProfile(true);
+        const profile = await getMyProfile();
+        setUserProfile(profile);
 
+      } catch (error) {
+        console.error('Errore nel caricamento del profilo:', error);
+        addToast({
+          type: "error",
+          title: "Errore",
+          message: "Errore nel caricamento del profilo",
+          timeout: 3000,
+          shouldShowTimeoutProgress: true,
+          color: "danger"
+        });
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    loadUserProfile();
+  }, []);
+  
   // Calcolo statistiche dai dati reali
   const dashboardStats = useMemo(() => {
     const totalSessions = sessionsIndex?.sessions?.length || 0;
     const totalExercises = exercisesIndex?.exercises?.length || 0;
     const totalMaxes = maxesIndex?.length || 0;
-    
+
     // Calcolo sessioni ultime 7 giorni
     const recentSessions = sessionsIndex?.sessions?.filter(session => {
       const sessionDate = dayjs(session.data_sessione);
       return sessionDate.isAfter(dayjs().subtract(7, 'days'));
     }) || [];
-    
+
     // Gruppo muscolare più allenato
     const muscleGroupCount = {};
     recentSessions.forEach(session => {
@@ -36,12 +70,12 @@ const Dashboard = () => {
         });
       }
     });
-    
-    const topMuscleGroup = Object.entries(muscleGroupCount).sort(([,a], [,b]) => b - a)[0];
-    
+
+    const topMuscleGroup = Object.entries(muscleGroupCount).sort(([, a], [, b]) => b - a)[0];
+
     return {
       totalSessions,
-      totalExercises, 
+      totalExercises,
       totalMaxes,
       recentSessions: recentSessions.length,
       topMuscleGroup: topMuscleGroup ? topMuscleGroup[0] : 'Nessuno'
@@ -51,9 +85,9 @@ const Dashboard = () => {
   // Dati per grafico attività settimanale
   const weeklyActivityData = useMemo(() => {
     if (!sessionsIndex?.sessions) return [];
-    
-    const last7Days = Array.from({length: 7}, (_, i) => {
-      const date = dayjs().subtract(6-i, 'days');
+
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const date = dayjs().subtract(6 - i, 'days');
       return {
         date: date.format('DD/MM'),
         fullDate: date.format('YYYY-MM-DD'),
@@ -61,7 +95,7 @@ const Dashboard = () => {
         exercises: 0
       };
     });
-    
+
     sessionsIndex.sessions.forEach(session => {
       const sessionDate = dayjs(session.data_sessione).format('YYYY-MM-DD');
       const dayData = last7Days.find(day => day.fullDate === sessionDate);
@@ -70,14 +104,14 @@ const Dashboard = () => {
         dayData.exercises += session.exercises?.length || 0;
       }
     });
-    
+
     return last7Days;
   }, [sessionsIndex]);
 
   // Dati per grafico esercizi più utilizzati
   const topExercisesData = useMemo(() => {
     if (!sessionsIndex?.sessions) return [];
-    
+
     const exerciseCount = {};
     sessionsIndex.sessions.forEach(session => {
       if (session.exercises) {
@@ -87,9 +121,9 @@ const Dashboard = () => {
         });
       }
     });
-    
+
     return Object.entries(exerciseCount)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([name, count]) => ({ name, count, fill: `hsl(${Math.random() * 360}, 70%, 50%)` }));
   }, [sessionsIndex]);
@@ -97,7 +131,7 @@ const Dashboard = () => {
   // Dati per grafico andamento massimali
   const maxesProgressData = useMemo(() => {
     if (!maxesIndex) return [];
-    
+
     return maxesIndex
       .sort((a, b) => new Date(a.data_registrata) - new Date(b.data_registrata))
       .slice(-10) // Ultimi 10 record
@@ -116,7 +150,9 @@ const Dashboard = () => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Ciao, Atleta! 💪</h1>
+            <h1 className="text-3xl font-bold mb-2">
+              Ciao, {userProfile?.nome || 'Atleta'}! 💪
+            </h1>
             <p className="text-blue-100">Ecco il tuo riepilogo fitness di oggi</p>
           </div>
           <div className="text-right">
@@ -124,7 +160,7 @@ const Dashboard = () => {
             <div className="text-sm text-blue-100">Sessioni (7gg)</div>
           </div>
         </div>
-        
+
         {/* Stats Cards Inline */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white/10 backdrop-blur rounded-lg p-3">
@@ -217,9 +253,9 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name, props) => [
-                      `${value} kg`, 
+                      `${value} kg`,
                       props.payload.esercizio
                     ]}
                   />
@@ -248,9 +284,9 @@ const Dashboard = () => {
           <CardBody>
             <div className="grid grid-cols-1 gap-3">
               <Link to="/sessions">
-                <Button 
-                  className="w-full justify-start" 
-                  color="primary" 
+                <Button
+                  className="w-full justify-start"
+                  color="primary"
                   variant="flat"
                   startContent={<Icon icon="lucide:plus" className="w-4 h-4" />}
                 >
@@ -258,9 +294,9 @@ const Dashboard = () => {
                 </Button>
               </Link>
               <Link to="/maxes">
-                <Button 
-                  className="w-full justify-start" 
-                  color="success" 
+                <Button
+                  className="w-full justify-start"
+                  color="success"
                   variant="flat"
                   startContent={<Icon icon="lucide:trophy" className="w-4 h-4" />}
                 >
@@ -268,9 +304,9 @@ const Dashboard = () => {
                 </Button>
               </Link>
               <Link to="/esercizi">
-                <Button 
-                  className="w-full justify-start" 
-                  color="secondary" 
+                <Button
+                  className="w-full justify-start"
+                  color="secondary"
                   variant="flat"
                   startContent={<Icon icon="lucide:search" className="w-4 h-4" />}
                 >
@@ -278,9 +314,9 @@ const Dashboard = () => {
                 </Button>
               </Link>
               <Link to="/profile">
-                <Button 
-                  className="w-full justify-start" 
-                  color="default" 
+                <Button
+                  className="w-full justify-start"
+                  color="default"
                   variant="flat"
                   startContent={<Icon icon="lucide:user" className="w-4 h-4" />}
                 >
@@ -302,7 +338,7 @@ const Dashboard = () => {
             </CardFooter>
           </Link>
         </Card>
-        
+
         <Card isFooterBlurred className="border-none aspect-[16/9]" radius="lg">
           <Image alt="Sessioni" className="object-cover object-top" src={imageSessione} />
           <Link to={"/sessions"}>
@@ -311,7 +347,7 @@ const Dashboard = () => {
             </CardFooter>
           </Link>
         </Card>
-        
+
         <Card isFooterBlurred className="border-none aspect-[16/9]" radius="lg">
           <Image alt="Massimali" className="object-cover object-top" height={"100%"} src={imageMassimale} width={"100%"} />
           <Link to={"/maxes"}>

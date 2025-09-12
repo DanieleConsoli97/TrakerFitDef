@@ -13,7 +13,8 @@ import {
     useDisclosure,
     Divider,
     Avatar,
-    Chip
+    Chip,
+    addToast
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
@@ -62,7 +63,14 @@ export const UserProfile = () => {
                 });
             } catch (error) {
                 console.error('Errore nel caricamento del profilo:', error);
-                setMessage({ text: 'Errore nel caricamento del profilo', type: 'error' });
+                addToast({
+                    type: "error",
+                    title: "Errore",
+                    message: "Errore nel caricamento del profilo",
+                    timeout: 3000,
+                    shouldShowTimeoutProgress: true,
+                    color: "danger"
+                });
             } finally {
                 setIsLoadingProfile(false);
             }
@@ -81,7 +89,14 @@ export const UserProfile = () => {
 
     const handleProfileUpdate = async () => {
         if (!profileForm.nome.trim() || !profileForm.cognome.trim() || !profileForm.email.trim()) {
-            setMessage({ text: 'Tutti i campi sono obbligatori per aggiornare il profilo', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "Tutti i campi sono obbligatori per aggiornare il profilo",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
@@ -92,14 +107,28 @@ export const UserProfile = () => {
             // Aggiorna i dati locali
             setUserProfile(prev => ({ ...prev, ...profileForm }));
             
-            setMessage({ text: 'Le informazioni del profilo sono state salvate con successo', type: 'success' });
+            addToast({
+                type: "success",
+                title: "Profilo Aggiornato",
+                message: "✨ Le informazioni del profilo sono state salvate con successo!",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "success"
+            });
             
             // Chiudi modal
             onClose();
             
         } catch (error) {
             console.error('Errore aggiornamento profilo:', error);
-            setMessage({ text: error.message || 'Impossibile aggiornare il profilo. Riprova più tardi', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Errore",
+                message: error.message || 'Impossibile aggiornare il profilo. Riprova più tardi',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
         } finally {
             setIsUpdating(false);
         }
@@ -107,17 +136,38 @@ export const UserProfile = () => {
 
     const handlePasswordChange = async () => {
         if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
-            setMessage({ text: 'Tutti i campi password sono obbligatori', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "Tutti i campi password sono obbligatori",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
         if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-            setMessage({ text: 'La nuova password e la conferma non coincidono', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "La nuova password e la conferma non coincidono",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
         if (passwordForm.newPassword.length < 6) {
-            setMessage({ text: 'La nuova password deve avere almeno 6 caratteri', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Validazione",
+                message: "La nuova password deve avere almeno 6 caratteri",
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
             return;
         }
 
@@ -128,7 +178,14 @@ export const UserProfile = () => {
                 newPassword: passwordForm.newPassword
             });
             
-            setMessage({ text: 'Password aggiornata con successo. Verrai disconnesso per sicurezza', type: 'success' });
+            addToast({
+                type: "success",
+                title: "Password Aggiornata",
+                message: "🔒 Password cambiata con successo! Verrai disconnesso per sicurezza.",
+                timeout: 4000,
+                shouldShowTimeoutProgress: true,
+                color: "success"
+            });
             
             setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
             
@@ -140,7 +197,14 @@ export const UserProfile = () => {
             
         } catch (error) {
             console.error('Errore cambio password:', error);
-            setMessage({ text: error.message || 'Impossibile cambiare la password. Riprova più tardi', type: 'error' });
+            addToast({
+                type: "error",
+                title: "Errore",
+                message: error.message || 'Impossibile cambiare la password. Riprova più tardi',
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                color: "danger"
+            });
         } finally {
             setIsChangingPassword(false);
         }

@@ -1,4 +1,4 @@
-import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody } from "@heroui/react";
+import { Form, Input, Select, SelectItem, Checkbox, Button, Switch, Card, CardHeader, CardBody, addToast } from "@heroui/react";
 import { useState } from "react";
 import EyeFilledIcon from '../assets/EyeFilledIcon'
 import EyeSlashFilledIcon from '../assets/EyeSlashFilledIcon'
@@ -28,7 +28,7 @@ function Login() {
     return null;
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
@@ -48,14 +48,41 @@ function Login() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      addToast({
+        type: "error",
+        title: "Errore di Validazione",
+        message: "Controlla i dati inseriti e riprova.",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "danger"
+      });
       return;
     }
 
-    // Clear errors and submit
-    setErrors({});
-    setSubmitted(data);
-    loginAction(data)
-
+    try {
+      // Clear errors and submit
+      setErrors({});
+      setSubmitted(data);
+      await loginAction(data);
+      
+      addToast({
+        type: "success",
+        title: "Login Effettuato",
+        message: "🎉 Accesso completato con successo!",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "success"
+      });
+    } catch (error) {
+      addToast({
+        type: "error",
+        title: "Errore di Login",
+        message: "Credenziali non valide. Riprova.",
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        color: "danger"
+      });
+    }
   };
 
   return (
